@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/views/compnayDashboard/post_job_screen.dart';
 import 'package:search_kare/widget/company_bottom_navigation_bar.dart';
 
 class MainCompanyScreen extends StatefulWidget {
@@ -58,7 +59,7 @@ class _MainCompanyScreenState extends State<MainCompanyScreen> {
       case 0:
         return const SizedBox();
       case 1:
-        return const SizedBox();
+        return const PostJobScreen();
       case 2:
         return const SizedBox();
       default:
