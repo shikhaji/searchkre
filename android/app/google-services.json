@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "715613015473",
+    "project_id": "searchkare-cd6a0",
+    "storage_bucket": "searchkare-cd6a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715613015473:android:7c2c4dc8e2e4c277e34190",
+        "android_client_info": {
+          "package_name": "com.example.search_kare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715613015473-ciif6ca09teheqr24bl7scerch17d287.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9tkErI0AglXueyEACzFO8Wx_y1_XxYWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715613015473-ciif6ca09teheqr24bl7scerch17d287.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
