@@ -10,15 +10,15 @@ import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
-class UpdateCompanyScreen extends StatefulWidget {
+class CompanyMyProfileScreen extends StatefulWidget {
   final SendArguments? arguments;
-  const UpdateCompanyScreen({Key? key, this.arguments}) : super(key: key);
+  const CompanyMyProfileScreen({Key? key, this.arguments}) : super(key: key);
 
   @override
-  State<UpdateCompanyScreen> createState() => _UpdateCompanyScreenState();
+  State<CompanyMyProfileScreen> createState() => _CompanyMyProfileScreenState();
 }
 
-class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
+class _CompanyMyProfileScreenState extends State<CompanyMyProfileScreen>
     with ValidationMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -29,14 +29,19 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
   final TextEditingController _city = TextEditingController();
   final TextEditingController _zipCode = TextEditingController();
   final TextEditingController _address = TextEditingController();
+  final TextEditingController _mNumber = TextEditingController();
   final TextEditingController _businessType = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackAppBar(
-        context,
-        title: "Candidate",
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "My Profile",
+          style: AppTextStyle.appText,
+        ),
       ),
       body: SafeArea(
           child: Form(
@@ -45,14 +50,6 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBoxH46(),
-            appText("Update Profile", style: AppTextStyle.s26W7Black),
-            SizedBoxH6(),
-            appText(
-              "Please update your profile and continue",
-              style:
-                  AppTextStyle.whiteSubtitle.copyWith(color: AppColor.darkGrey),
-            ),
-            SizedBoxH28(),
             appText("Personal Details", style: AppTextStyle.appText),
             SizedBoxH14(),
             AppTextField(
@@ -75,8 +72,7 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
             ),
             AppTextField(
               title: "Mobile Number",
-              controller: TextEditingController(
-                  text: "+91 ${widget.arguments?.mobileNumber}"),
+              controller: _mNumber,
               hintText: "Enter mobile number",
               keyboardInputType: TextInputType.phone,
             ),

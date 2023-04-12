@@ -3,6 +3,9 @@ import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/views/compnayDashboard/post_job_screen.dart';
 import 'package:search_kare/widget/company_bottom_navigation_bar.dart';
 
+import 'comapny_home_screen.dart';
+import 'company_my_profile_screen.dart';
+
 class MainCompanyScreen extends StatefulWidget {
   final SendArguments? arguments;
   const MainCompanyScreen({Key? key, this.arguments}) : super(key: key);
@@ -57,11 +60,11 @@ class _MainCompanyScreenState extends State<MainCompanyScreen> {
   Widget _buildBody(int index) {
     switch (index) {
       case 0:
-        return const SizedBox();
+        return const CompanyHomeScreen();
       case 1:
         return const PostJobScreen();
       case 2:
-        return const SizedBox();
+        return const CompanyMyProfileScreen();
       default:
     }
     return Container();

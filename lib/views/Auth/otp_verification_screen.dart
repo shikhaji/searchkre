@@ -6,7 +6,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:search_kare/models/auth_result.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/utils/function.dart';
-import 'package:search_kare/utils/loder.dart';
+import 'package:search_kare/utils/loader.dart';
 import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/utils/app_color.dart';
@@ -171,9 +171,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     );
   }
 
+  FirebaseAuth auth = FirebaseAuth.instance;
   Future<void> sendCode() async {
     Loader.showLoader();
-    await FirebaseAuth.instance.verifyPhoneNumber(
+    await auth.setSettings(
+      appVerificationDisabledForTesting: false,
+      forceRecaptchaFlow: false,
+    );
+    auth.verifyPhoneNumber(
       phoneNumber: "${"+91"}${widget.arguments?.mobileNumber}",
       verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {

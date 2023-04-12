@@ -23,6 +23,8 @@ dependencies:
   flutter_svg: ^2.0.4
   pin_code_fields: ^7.4.0
   r_dotted_line_border: ^0.1.1
+  dio: ^4.0.6
+
 
   #firebase
   firebase_core: ^2.7.1

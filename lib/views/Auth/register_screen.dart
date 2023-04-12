@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
@@ -107,7 +109,17 @@ class _RegisterScreenState extends State<RegisterScreen> with ValidationMixin {
                 title: "Register",
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.pushNamed(context, Routs.login);
+                    FormData data() {
+                      return FormData.fromMap({
+                        "name": _name.text.trim(),
+                        'contact': widget.arguments?.mobileNumber,
+                        "password": _password.text.trim(),
+                        "type":
+                            widget.arguments?.continueAs == "Candidate" ? 1 : 2
+                      });
+                    }
+
+                    ApiService().register(context, data: data());
                   }
                 }),
             SizedBoxH18(),

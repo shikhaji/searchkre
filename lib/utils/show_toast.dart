@@ -1,10 +1,13 @@
-import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'app_color.dart';
 
-void showToast({required String title, bool status = false}) {
-  Get.showSnackbar(GetSnackBar(
-    duration: const Duration(seconds: 3),
-    message: title,
-    backgroundColor: status ? AppColor.green : AppColor.red,
-  ));
+void showToast(String message) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: AppColor.primaryColor,
+      textColor: AppColor.white,
+      fontSize: 16.0);
 }

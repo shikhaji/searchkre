@@ -12,6 +12,8 @@ class AppAsset {
   static const String camera = "${iconPath}camera.svg";
   static const String dummyAvatar = "${imagePath}dummyAvatar_img.jpg";
 
+  static const String yesOrNoIcon = "${iconPath}yes_no_icon.png";
+
   //BOTTOM NAVIGATION
   static const String add = '${iconPath}add.png';
   static const String addFill = '${iconPath}add_fill.png';

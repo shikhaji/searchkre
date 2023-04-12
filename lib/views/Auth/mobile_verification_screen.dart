@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
@@ -70,11 +71,10 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen>
                 title: "Send OTP",
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.pushNamed(context, Routs.otpVerification,
+                    ApiService().mobileVerify(context,
                         arguments: SendArguments(
                           mobileNumber: _mNumber.text.trim(),
                           continueAs: widget.arguments?.continueAs,
-                          otpStatus: 0,
                         ));
                   }
                 }),
