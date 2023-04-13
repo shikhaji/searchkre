@@ -115,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> with ValidationMixin {
                         'contact': widget.arguments?.mobileNumber,
                         "password": _password.text.trim(),
                         "type":
-                            widget.arguments?.continueAs == "Candidate" ? 1 : 2
+                            widget.arguments?.continueAs == "Candidate" ? 2 : 3
                       });
                     }
 

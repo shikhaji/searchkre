@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
@@ -89,19 +91,17 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixin {
             AppButton(
                 title: "Login",
                 onPressed: () {
-                  // if (_formKey.currentState?.validate() ?? false) {}
-                  // Navigator.pushNamed(context, Routs.updateCandidate,
-                  //     arguments:
-                  //         SendArguments(mobileNumber: _mNumber.text.trim()));
-                  Navigator.pushNamed(context, Routs.updateCompany,
-                      arguments:
-                          SendArguments(mobileNumber: _mNumber.text.trim()));
-                  // Navigator.pushNamedAndRemoveUntil(
-                  //     context, Routs.mainCandidateHome, (route) => false,
-                  //     arguments: SendArguments(bottomIndex: 0));
-                  // Navigator.pushNamedAndRemoveUntil(
-                  //     context, Routs.mainCompanyHome, (route) => false,
-                  //     arguments: SendArguments(bottomIndex: 0));
+                  if (_formKey.currentState?.validate() ?? false) {
+                    FormData data() {
+                      return FormData.fromMap({
+                        'contact': _mNumber.text.trim(),
+                        'password': _password.text.trim(),
+                      });
+                    }
+
+                    ApiService()
+                        .login(context, _mNumber.text.trim(), data: data());
+                  }
                 }),
             SizedBoxH18(),
             GestureDetector(

@@ -57,7 +57,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 continueAs: widget.arguments?.continueAs,
                 mobileNumber: widget.arguments?.mobileNumber));
       } else {
-        Navigator.pushNamed(context, Routs.resetPassword);
+        Navigator.pushNamed(context, Routs.resetPassword,
+            arguments:
+                SendArguments(mobileNumber: widget.arguments?.mobileNumber));
       }
     }
   }
@@ -75,7 +77,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Scaffold(
       appBar: BackAppBar(
         context,
-        title: widget.arguments?.continueAs,
       ),
       body: SafeArea(
           child: Form(
@@ -174,10 +175,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   Future<void> sendCode() async {
     Loader.showLoader();
-    await auth.setSettings(
-      appVerificationDisabledForTesting: false,
-      forceRecaptchaFlow: false,
-    );
+    // await auth.setSettings(
+    //   appVerificationDisabledForTesting: false,
+    //   forceRecaptchaFlow: false,
+    // );
     auth.verifyPhoneNumber(
       phoneNumber: "${"+91"}${widget.arguments?.mobileNumber}",
       verificationCompleted: (PhoneAuthCredential credential) {},

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/arguments.dart';
-import 'package:search_kare/views/compnayDashboard/post_job_screen.dart';
+import 'package:search_kare/views/companyDashboard/post_job_screen.dart';
 import 'package:search_kare/widget/company_bottom_navigation_bar.dart';
-
-import 'comapny_home_screen.dart';
+import 'company_home_screen.dart';
 import 'company_my_profile_screen.dart';
 
 class MainCompanyScreen extends StatefulWidget {
@@ -34,18 +33,6 @@ class _MainCompanyScreenState extends State<MainCompanyScreen> {
         return Scaffold(
           key: _scaffoldKey,
           body: _buildBody(currentIndex),
-          // drawer: Drawer(
-          //   backgroundColor: Colors.white,
-          //   elevation: 0,
-          //   width: ScreenUtil().screenWidth * 0.8,
-          //   shape: RoundedRectangleBorder(
-          //     borderRadius: BorderRadius.only(
-          //       topRight: Radius.circular(Sizes.s20.r),
-          //       bottomRight: Radius.circular(Sizes.s20.r),
-          //     ),
-          //   ),
-          //   child: const DrawerWidget(),
-          // ),
           bottomNavigationBar: CompanyBottomNavigationBar(
             currentIndex: currentIndex,
             onTap: (index) {

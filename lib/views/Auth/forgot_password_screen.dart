@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_text.dart';
 import 'package:search_kare/utils/app_text_style.dart';
+import 'package:search_kare/utils/show_toast.dart';
 import 'package:search_kare/utils/validation_mixin.dart';
 import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/widget/app_button.dart';
@@ -65,12 +67,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             AppButton(
                 title: "Send OTP",
                 onPressed: () {
-                  Navigator.pushNamed(context, Routs.otpVerification,
-                      arguments: SendArguments(
-                        mobileNumber: _mNumber.text.trim(),
-                        otpStatus: 1,
-                      ));
-                  // if (_formKey.currentState?.validate() ?? false) {}
+                  if (_formKey.currentState?.validate() ?? false) {
+                    ApiService()
+                        .mobileVerify(context,
+                            arguments: SendArguments(
+                              mobileNumber: _mNumber.text.trim(),
+                            ))
+                        .then((value) {
+                      if (value.data['message'] == 0) {
+                        showToast('Your number is not register');
+                      } else {
+                        Navigator.pushNamed(context, Routs.otpVerification,
+                            arguments: SendArguments(
+                              mobileNumber: _mNumber.text.trim(),
+                              otpStatus: 1,
+                            ));
+                      }
+                    });
+                  }
                 }),
             SizedBoxH18(),
           ],

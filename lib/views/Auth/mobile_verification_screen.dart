@@ -6,6 +6,7 @@ import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
 import 'package:search_kare/utils/app_text_style.dart';
+import 'package:search_kare/utils/show_toast.dart';
 import 'package:search_kare/utils/validation_mixin.dart';
 import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/widget/app_button.dart';
@@ -71,11 +72,25 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen>
                 title: "Send OTP",
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    ApiService().mobileVerify(context,
-                        arguments: SendArguments(
-                          mobileNumber: _mNumber.text.trim(),
-                          continueAs: widget.arguments?.continueAs,
-                        ));
+                    ApiService()
+                        .mobileVerify(context,
+                            arguments: SendArguments(
+                              mobileNumber: _mNumber.text.trim(),
+                              continueAs: widget.arguments?.continueAs,
+                            ))
+                        .then((value) {
+                      if (value.data['message'] == 0) {
+                        Navigator.pushNamed(context, Routs.otpVerification,
+                            arguments: SendArguments(
+                              mobileNumber: _mNumber.text.trim(),
+                              continueAs: widget.arguments?.continueAs,
+                              otpStatus: 0,
+                            ));
+                      } else {
+                        showToast(
+                            'Your number is already register please login');
+                      }
+                    });
                   }
                 }),
             SizedBoxH18(),

@@ -9,30 +9,35 @@ class Preferences {
 
   static SharedPreferences? _shared;
 
-  final String _isLogged = 'is_logged';
-  final String _token = 'token';
+  final String _loginId = 'loginId';
+  final String _loginType = 'loginType';
+  final String _profileUpdate = 'profileUpdate';
   final String _isIntroCompleted = 'is_intro_completed';
 
   static Future<void> init() async {
     _shared = await SharedPreferences.getInstance();
   }
 
-  set isLogged(bool value) => _shared?.setBool(_isLogged, value);
-  bool get isLogged => _shared?.getBool(_isLogged) ?? false;
+  set loginId(String value) => _shared?.setString(_loginId, value);
+  String get loginId => _shared?.getString(_loginId) ?? '';
 
   set isIntroCompleted(bool value) =>
       _shared?.setBool(_isIntroCompleted, value);
   bool get isIntroCompleted => _shared?.getBool(_isIntroCompleted) ?? false;
 
-  set token(String? value) {
-    if (value == null) return;
-    _shared?.setString(_token, value);
-  }
+  set loginType(String value) => _shared?.setString(_loginType, value);
+  String get loginType => _shared?.getString(_loginType) ?? '';
 
-  String? get token => _shared?.getString(_token);
+  set profileUpdate(String value) => _shared?.setString(_profileUpdate, value);
+  String get profileUpdate => _shared?.getString(_profileUpdate) ?? '';
 
   Future<void> clear() async {
     await _shared?.clear();
+  }
+
+  Future<void> logout() async {
+    await _shared?.remove(_loginId);
+    await _shared?.remove(_loginType);
   }
 
   static Preferences get instance => _instance;

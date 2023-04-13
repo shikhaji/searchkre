@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/app_routs.dart';
+import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_text.dart';
 import 'package:search_kare/utils/app_text_style.dart';
@@ -11,7 +14,8 @@ import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({Key? key}) : super(key: key);
+  final SendArguments? arguments;
+  const ResetPasswordScreen({Key? key, this.arguments}) : super(key: key);
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -89,7 +93,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 title: "Reset",
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.pushNamed(context, Routs.login);
+                    FormData data() {
+                      return FormData.fromMap({
+                        "phone": widget.arguments?.mobileNumber,
+                        "new_password": _password.text.trim(),
+                      });
+                    }
+
+                    ApiService().resetPassword(context, data: data());
                   }
                 }),
             SizedBoxH18(),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/widget/candidate_bottom_navigation_bar.dart';
 
+import 'candidate_my_profile_screen.dart';
+
 class MainCandidateScreen extends StatefulWidget {
   final SendArguments? arguments;
   const MainCandidateScreen({Key? key, this.arguments}) : super(key: key);
@@ -31,18 +33,6 @@ class _MainCandidateScreenState extends State<MainCandidateScreen> {
         return Scaffold(
           key: _scaffoldKey,
           body: _buildBody(currentIndex),
-          // drawer: Drawer(
-          //   backgroundColor: Colors.white,
-          //   elevation: 0,
-          //   width: ScreenUtil().screenWidth * 0.8,
-          //   shape: RoundedRectangleBorder(
-          //     borderRadius: BorderRadius.only(
-          //       topRight: Radius.circular(Sizes.s20.r),
-          //       bottomRight: Radius.circular(Sizes.s20.r),
-          //     ),
-          //   ),
-          //   child: const DrawerWidget(),
-          // ),
           bottomNavigationBar: CandidateBottomNavigationBar(
             currentIndex: currentIndex,
             onTap: (index) {
@@ -61,7 +51,7 @@ class _MainCandidateScreenState extends State<MainCandidateScreen> {
       case 1:
         return const SizedBox();
       case 2:
-        return const SizedBox();
+        return const CandidateMyProfileScreen();
       default:
     }
     return Container();

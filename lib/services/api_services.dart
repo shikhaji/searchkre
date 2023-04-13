@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/api/url.dart';
+import 'package:search_kare/helper/preferences.dart';
+import 'package:search_kare/models/get_city_list_model.dart';
+import 'package:search_kare/models/get_state_list_model.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/utils/loader.dart';
@@ -25,19 +28,8 @@ class ApiService {
           data: formData);
 
       if (response.statusCode == 200) {
-        if (response.data['message'] == 0) {
-          Navigator.pushNamed(context, Routs.otpVerification,
-              arguments: SendArguments(
-                mobileNumber: arguments?.mobileNumber,
-                continueAs: arguments?.continueAs,
-                otpStatus: 0,
-              ));
-        } else {
-          showToast('Your number is already register please login');
-        }
         return response;
       } else {
-        print("hello false");
         showToast('Wrong');
       }
     } on DioError catch (e) {
@@ -73,51 +65,133 @@ class ApiService {
     }
   }
 
-  // Future login(
-  //   BuildContext context, {
-  //   FormData? data,
-  // }) async {
-  //   try {
-  //     Loader.showLoader();
-  //     Response response;
-  //     response = await dio.post(EndPoints.login,
-  //         options: Options(headers: {
-  //           "Client-Service": "frontend-client",
-  //           "Auth-Key": 'simplerestapi',
-  //         }),
-  //         data: data);
-  //     LoginModel responseData = LoginModel.fromJson(response.data);
-  //     if (responseData.success == "true") {
-  //       print("hello true");
-  //       showToast("Login successfully");
-  //       Provider.of<UserProvider>(context, listen: false)
-  //           .setUserModel(responseData);
-  //       Preferences.prefSetString(
-  //           Preferences.keyUserId, responseData.id.toString());
-  //       Preferences.prefSetString(
-  //           Preferences.keyMyCode, responseData.myCode.toString());
-  //       Preferences.prefSetString(
-  //           Preferences.keyLoginType, responseData.companyHrmType.toString());
-  //       print("responseData.companyHrmType := ${responseData.companyHrmType}");
-  //       if (responseData.companyHrmType == 2) {
-  //         Navigator.pushNamedAndRemoveUntil(
-  //             context, Routs.partnerMainHome, (route) => false,
-  //             arguments: SendArguments(bottomIndex: 0));
-  //       } else {
-  //         Navigator.pushNamedAndRemoveUntil(
-  //             context, Routs.employeeMainHome, (route) => false,
-  //             arguments: SendArguments(bottomIndex: 0));
-  //       }
-  //       return responseData;
-  //     } else {
-  //       print("hello false");
-  //       showToast(responseData.message.toString());
-  //     }
-  //   } on DioError catch (e) {
-  //     debugPrint(e.toString());
-  //     return;
-  //   } finally {
-  //     Loader.hideLoader();
-  //   }
-  // }
+  Future<GetStateListModel?> getState() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.getState,
+        options: Options(headers: {"Content-Type": 'application/json'}),
+      );
+      if (response.statusCode == 200) {
+        GetStateListModel responseData =
+            GetStateListModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<GetCityListModel?> getCity(String stateId) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      FormData formData = FormData.fromMap({"stateid": stateId});
+      response = await dio.post(EndPoints.getCity,
+          options: Options(headers: {"Content-Type": 'application/json'}),
+          data: formData);
+      if (response.statusCode == 200) {
+        GetCityListModel responseData =
+            GetCityListModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future login(
+    BuildContext context,
+    String mobile, {
+    FormData? data,
+  }) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.login,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.data['message'] == 'ok') {
+        showToast("Login successfully");
+        preferences.loginId = response.data['id'];
+        preferences.loginType = response.data['COMPANY_HRM_TYPE'];
+        preferences.profileUpdate = response.data['BRANCH_KYC_STATUS'];
+
+        if (response.data['BRANCH_KYC_STATUS'] == "0") {
+          if (response.data['COMPANY_HRM_TYPE'] == "2") {
+            Navigator.pushNamed(context, Routs.updateCandidate,
+                arguments: SendArguments(mobileNumber: mobile));
+          } else {
+            Navigator.pushNamed(context, Routs.updateCompany,
+                arguments: SendArguments(mobileNumber: mobile));
+          }
+        } else {
+          if (response.data['COMPANY_HRM_TYPE'] == "2") {
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routs.mainCandidateHome, (route) => false,
+                arguments: SendArguments(bottomIndex: 0));
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routs.mainCompanyHome, (route) => false,
+                arguments: SendArguments(bottomIndex: 0));
+          }
+        }
+
+        return response;
+      } else {
+        showToast("Invalid login credentials");
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future resetPassword(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.resetPassword,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.statusMessage == 200) {
+        Navigator.pushNamed(context, Routs.login);
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
 }

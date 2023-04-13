@@ -9,9 +9,13 @@ import 'package:search_kare/views/Auth/reset_password_screen.dart';
 import 'package:search_kare/views/Auth/update_candidate_screen.dart';
 import 'package:search_kare/views/Auth/update_company_screen.dart';
 import 'package:search_kare/views/candidateDashboard/main_candidate_screen.dart';
-import 'package:search_kare/views/compnayDashboard/main_company_screen.dart';
-import 'package:search_kare/views/compnayDashboard/post_job_screen.dart';
+import 'package:search_kare/views/companyDashboard/main_company_screen.dart';
+import 'package:search_kare/views/companyDashboard/post_job_screen.dart';
 import 'package:search_kare/views/onBoarding/on_boarding_screen.dart';
+import 'package:search_kare/views/sideMenu/about_us.dart';
+import 'package:search_kare/views/sideMenu/contact_us.dart';
+import 'package:search_kare/views/sideMenu/privacy_policy.dart';
+import 'package:search_kare/views/sideMenu/terms_and_condition_screen.dart';
 import 'package:search_kare/views/splash/splash_screen.dart';
 import 'arguments.dart';
 
@@ -30,6 +34,10 @@ class Routs {
   static const String mainCandidateHome = "/main_candidate_screen";
   static const String mainCompanyHome = "/main_company_screen";
   static const String postJob = "/post_job_screen";
+  static const String privacyPolicy = "/privacy_policy";
+  static const String termsAndCondition = "/terms_and_condition_screen";
+  static const String aboutUs = "/about_us";
+  static const String contactUs = "/contact_us_screen";
 }
 
 class RoutGenerator {
@@ -53,7 +61,10 @@ class RoutGenerator {
       case Routs.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
       case Routs.resetPassword:
-        return MaterialPageRoute(builder: (_) => const ResetPasswordScreen());
+        return MaterialPageRoute(
+            builder: (_) => ResetPasswordScreen(
+                  arguments: arguments as SendArguments,
+                ));
       case Routs.updateCompany:
         return MaterialPageRoute(
             builder: (_) => UpdateCompanyScreen(
@@ -86,7 +97,16 @@ class RoutGenerator {
                 ));
       case Routs.postJob:
         return MaterialPageRoute(builder: (_) => const PostJobScreen());
+      case Routs.privacyPolicy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
 
+      case Routs.termsAndCondition:
+        return MaterialPageRoute(
+            builder: (_) => const TermsAndConditionScreen());
+      case Routs.aboutUs:
+        return MaterialPageRoute(builder: (_) => const AboutUsScreen());
+      case Routs.contactUs:
+        return MaterialPageRoute(builder: (_) => const ContactUsScreen());
       default:
         return null;
     }

@@ -20,8 +20,9 @@ class AppTextStyle {
     fontWeight: FontWeight.bold,
     color: AppColor.orange,
   );
+
   static const TextStyle body1 =
-  TextStyle(fontSize: Sizes.s12, fontWeight: FontWeight.w900);
+      TextStyle(fontSize: Sizes.s12, fontWeight: FontWeight.w900);
   static const TextStyle greySubTitle = TextStyle(
       color: AppColor.grey, fontSize: Sizes.s16, fontWeight: FontWeight.w400);
   static const TextStyle whiteSubtitle = TextStyle(

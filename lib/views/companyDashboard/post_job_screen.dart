@@ -11,6 +11,7 @@ import 'package:search_kare/utils/validation_mixin.dart';
 import 'package:search_kare/widget/app_button.dart';
 import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
+import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
 class PostJobScreen extends StatefulWidget {
@@ -24,10 +25,17 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _des = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   XFile? selectedDocument;
+
+  void openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: AppColor.textFieldColor,
         appBar: AppBar(
           elevation: 0,
@@ -36,6 +44,23 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
             "Post Job",
             style: AppTextStyle.appText,
           ),
+          leading: IconButton(
+              onPressed: () {
+                openDrawer();
+              },
+              icon: const Icon(Icons.menu_open_sharp)),
+        ),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          width: ScreenUtil().screenWidth * 0.8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(Sizes.s20.r),
+              bottomRight: Radius.circular(Sizes.s20.r),
+            ),
+          ),
+          child: const DrawerWidget(),
         ),
         body: Form(
             key: _formKey,

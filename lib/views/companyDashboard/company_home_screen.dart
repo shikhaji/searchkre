@@ -6,8 +6,10 @@ import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
 import 'package:search_kare/utils/app_text_style.dart';
-import 'package:search_kare/views/compnayDashboard/popUp/delete_post_popup.dart';
+import 'package:search_kare/utils/screen_utils.dart';
+import 'package:search_kare/views/commonPopUp/delete_post_popup.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
+import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
 class CompanyHomeScreen extends StatefulWidget {
@@ -18,9 +20,16 @@ class CompanyHomeScreen extends StatefulWidget {
 }
 
 class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
@@ -28,12 +37,27 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
             "Home",
             style: AppTextStyle.appText,
           ),
+          leading: IconButton(
+              onPressed: () {
+                openDrawer();
+              },
+              icon: const Icon(Icons.menu_open_sharp)),
+        ),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          width: ScreenUtil().screenWidth * 0.8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(Sizes.s20.r),
+              bottomRight: Radius.circular(Sizes.s20.r),
+            ),
+          ),
+          child: const DrawerWidget(),
         ),
         body: CustomScroll(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBoxH46(),
-            appText("Slider"),
             SizedBoxH20(),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -77,8 +101,8 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                 itemCount: 8,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(top: 10, bottom: 12),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: AppColor.textFieldColor,
                       borderRadius: BorderRadius.circular(12),
@@ -120,7 +144,53 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                             style: AppTextStyle.greySubTitle
                                 .copyWith(color: AppColor.black),
                           ),
+                        ),
+                        SizedBoxH8(),
+                        const Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  "View Candidate",
+                                  style: AppTextStyle.s20W7PrimaryColor
+                                      .copyWith(
+                                          fontSize: Sizes.s20,
+                                          decoration: TextDecoration.underline),
+                                ),
+                              )
+                            ],
+                          ),
                         )
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 12, vertical: 10),
+                        //   decoration: const BoxDecoration(
+                        //       borderRadius: BorderRadius.only(
+                        //         topRight: Radius.circular(12),
+                        //         topLeft: Radius.circular(12),
+                        //       ),
+                        //       // borderRadius: BorderRadius.circular(12),
+                        //       color: AppColor.black),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Text(
+                        //         "8 Candidate",
+                        //         style: AppTextStyle.whiteSubtitle
+                        //             .copyWith(fontSize: Sizes.s20),
+                        //       ),
+                        //       Text(
+                        //         "View All",
+                        //         style: AppTextStyle.whiteSubtitle
+                        //             .copyWith(fontSize: Sizes.s20),
+                        //       )
+                        //     ],
+                        //   ),
+                        // )
                       ],
                     ),
                   );
