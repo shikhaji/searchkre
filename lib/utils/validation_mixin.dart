@@ -167,11 +167,11 @@ mixin ValidationMixin {
     }
   }
 
-  String? pickupDateValidation(String? pickupDate) {
-    if (pickupDate!.isNotEmpty) {
+  String? dobValidation(String? dob) {
+    if (dob!.isNotEmpty) {
       return null;
     } else {
-      return "Please Enter Date";
+      return "Please enter date of birth";
     }
   }
 

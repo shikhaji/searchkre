@@ -9,4 +9,6 @@ class EndPoints {
   static const String getState = '$baseUrl/get_states';
   static const String getCity = '$baseUrl/get_district';
   static const String resetPassword = '$baseUrl/update_new_password';
+  static const String updateKyc = '$baseUrl/update_kyc_detail';
+  static const String businessCategory = '$baseUrl/get_all_category';
 }

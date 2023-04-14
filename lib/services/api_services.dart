@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/api/url.dart';
 import 'package:search_kare/helper/preferences.dart';
+import 'package:search_kare/models/business_category_list.dart';
 import 'package:search_kare/models/get_city_list_model.dart';
 import 'package:search_kare/models/get_state_list_model.dart';
 import 'package:search_kare/routs/app_routs.dart';
@@ -53,6 +54,41 @@ class ApiService {
 
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, Routs.login);
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future updateCandidate(BuildContext context, int updateType,
+      {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.updateKyc,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.data['message'] == 'updated') {
+        if (updateType == 0) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, Routs.mainCandidateHome, (route) => false,
+              arguments: SendArguments(bottomIndex: 0));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, Routs.mainCompanyHome, (route) => false,
+              arguments: SendArguments(bottomIndex: 0));
+        }
+
         return response;
       } else {
         showToast('Something went wrong');
@@ -117,6 +153,32 @@ class ApiService {
     return null;
   }
 
+  Future<BusinessCategoryList?> businessCategoryList() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.businessCategory,
+        options: Options(headers: {"Content-Type": 'application/json'}),
+      );
+      if (response.statusCode == 200) {
+        BusinessCategoryList responseData =
+            BusinessCategoryList.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
   Future login(
     BuildContext context,
     String mobile, {
@@ -141,10 +203,10 @@ class ApiService {
         if (response.data['BRANCH_KYC_STATUS'] == "0") {
           if (response.data['COMPANY_HRM_TYPE'] == "2") {
             Navigator.pushNamed(context, Routs.updateCandidate,
-                arguments: SendArguments(mobileNumber: mobile));
+                arguments: SendArguments(mobileNumber: response.data['PHONE']));
           } else {
             Navigator.pushNamed(context, Routs.updateCompany,
-                arguments: SendArguments(mobileNumber: mobile));
+                arguments: SendArguments(mobileNumber: response.data['PHONE']));
           }
         } else {
           if (response.data['COMPANY_HRM_TYPE'] == "2") {

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'app_color.dart';
+import 'package:intl/intl.dart';
 
 class FileUtils {
   FileUtils._();
@@ -31,8 +32,8 @@ class FileUtils {
     final DateTime? selectedTime = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime(3000),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101),
         builder: (BuildContext context, Widget? child) {
           return Theme(
             data: ThemeData(
@@ -50,5 +51,12 @@ class FileUtils {
     } else {
       return null;
     }
+  }
+
+  static getFormatDate(String date) {
+    var inputDate = DateTime.parse(date);
+    var outputFormat = DateFormat('MMM dd, yyyy');
+    var newDate = outputFormat.format(inputDate);
+    return newDate;
   }
 }

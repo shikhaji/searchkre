@@ -1,17 +1,26 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:search_kare/helper/preferences.dart';
+import 'package:search_kare/models/city_model.dart';
+import 'package:search_kare/models/state_model.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_asset.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text.dart';
 import 'package:search_kare/utils/app_text_style.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:search_kare/utils/file_utils.dart';
 import 'package:search_kare/utils/screen_utils.dart';
+import 'package:search_kare/utils/show_toast.dart';
 import 'package:search_kare/utils/validation_mixin.dart';
+import 'package:search_kare/views/commonPopUp/city_picker.dart';
+import 'package:search_kare/views/commonPopUp/state_picker.dart';
 import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/widget/app_button.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
@@ -35,6 +44,8 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
   final TextEditingController _fName = TextEditingController();
   final TextEditingController _mName = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  final TextEditingController _mNumber = TextEditingController();
+  final ValueNotifier<DateTime?> selectDate = ValueNotifier(null);
   final TextEditingController _dob = TextEditingController();
   final TextEditingController _state = TextEditingController();
   final TextEditingController _city = TextEditingController();
@@ -45,6 +56,9 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
 
   File? _file;
   XFile? selectedDocument;
+
+  StateModel stateModel = StateModel();
+  CityModel cityModel = CityModel();
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +118,37 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
               validator: emailValidator,
             ),
             AppTextField(
-              title: "Date of Birth",
-              controller: _dob,
-              hintText: "Enter your DOB",
-              validator: dateOfBirth,
+              title: "Mobile Number",
+              controller:
+                  TextEditingController(text: widget.arguments?.mobileNumber),
+              hintText: "Enter your mobile number",
+              validator: mobileNumberValidator,
+              readOnly: true,
+            ),
+            Row(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: selectDate,
+                  builder:
+                      (BuildContext context, DateTime? value, Widget? child) {
+                    return Flexible(
+                        child: AppTextField(
+                      title: "Date of Birth",
+                      validator: dobValidation,
+                      readOnly: true,
+                      controller: _dob,
+                      hintText: selectDate.value == null
+                          ? "Please select date"
+                          : _dob.text,
+                      onTap: () async {
+                        selectDate.value = await FileUtils.pickDate(context);
+                        _dob.text = FileUtils.getFormatDate(selectDate.value
+                            .toString()); //   debugPrint(pickedDate.value);
+                      },
+                    ));
+                  },
+                ),
+              ],
             ),
             AppTextField(
               title: "Mobile Number",
@@ -127,6 +168,13 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                     controller: _state,
                     hintText: "Enter your state",
                     validator: stateValidation,
+                    readOnly: true,
+                    onTap: () async {
+                      stateModel = await StatePickerPopup.show(context);
+                      _state.text = stateModel.stateName ?? '';
+                      _city.clear();
+                      setState(() {});
+                    },
                   ),
                 ),
                 SizedBoxW8(),
@@ -136,6 +184,13 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                     controller: _city,
                     hintText: "Enter your city",
                     validator: cityValidation,
+                    readOnly: true,
+                    onTap: () async {
+                      cityModel = await CityPickerPopup.show(
+                          context, "${stateModel.stateId}");
+                      _city.text = cityModel.districtName ?? '';
+                      setState(() {});
+                    },
                   ),
                 ),
               ],
@@ -169,12 +224,14 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
             ),
             InkWell(
               onTap: () async {
-                File? file = await FileUtils.pickImage(ImageSource.gallery);
-                if (file != null) {
-                  setState(() {
-                    _file = file;
-                  });
-                }
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf'],
+                    allowMultiple: false);
+                if (result == null) return;
+                final path = result.files.single.path;
+                print('file path.... :- ${path}');
+                setState(() => _file = File(path!));
               },
               child: uploadBox(
                 'Upload Your CV',
@@ -184,8 +241,42 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
             SizedBoxH28(),
             AppButton(
                 title: "Update",
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {}
+                onPressed: () async {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      if (selectedDocument!.path == null) {
+                        showToast("Upload profile image");
+                      } else if (_file!.path == null) {
+                        showToast("Upload CV document");
+                      } else {
+                        var profileImage = await MultipartFile.fromFile(
+                            selectedDocument!.path);
+                        var cv = await MultipartFile.fromFile(_file!.path);
+                        FormData data() {
+                          return FormData.fromMap({
+                            "loginid": preferences.loginId,
+                            "profile_type": 2,
+                            'name': _name.text.trim(),
+                            "father_name": _fName.text.trim(),
+                            "mother_name": _mName.text.trim(),
+                            "phone": widget.arguments?.mobileNumber,
+                            "email": _email.text.trim(),
+                            "state": _state.text.trim(),
+                            "city": _city.text.trim(),
+                            "zip_code": _zipCode.text.trim(),
+                            "business_address": _address.text.trim(),
+                            "qualification": _qualification.text.trim(),
+                            "experience": _experience.text.trim(),
+                            "dob": _dob.text.trim(),
+                            "fileToUpload1": profileImage,
+                            "fileToUpload2": cv,
+                          });
+                        }
+
+                        ApiService().updateCandidate(context, 0, data: data());
+                      }
+                    }
+                  }
                 }),
             SizedBoxH28(),
           ],
@@ -344,10 +435,11 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
       height: Sizes.s180.h,
       child: Center(
         child: image != ''
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(File(image),
-                    width: double.infinity, fit: BoxFit.cover))
+            ? Text(_file!.path)
+            // ? ClipRRect(
+            //     borderRadius: BorderRadius.circular(16),
+            //     child: Image.file(File(image),
+            //         width: double.infinity, fit: BoxFit.cover))
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
