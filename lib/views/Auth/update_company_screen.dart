@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:search_kare/helper/preferences.dart';
 import 'package:search_kare/models/business_category.dart';
 import 'package:search_kare/models/city_model.dart';
 import 'package:search_kare/models/state_model.dart';
@@ -111,6 +109,7 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
                   text: "+91 ${widget.arguments?.mobileNumber}"),
               hintText: "Enter mobile number",
               keyboardInputType: TextInputType.phone,
+              readOnly: true,
             ),
             SizedBoxH14(),
             appText("Location", style: AppTextStyle.appText),
@@ -167,6 +166,7 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
             SizedBoxH14(),
             AppTextField(
               title: "Business Type",
+              readOnly: true,
               controller: _businessType,
               onTap: () async {
                 businessCategory =
@@ -190,7 +190,7 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
                             selectedDocument!.path);
                         FormData data() {
                           return FormData.fromMap({
-                            "loginid": preferences.loginId,
+                            "loginid": widget.arguments?.kycLoginId,
                             "profile_type": 3,
                             'owner_name': _oName.text.trim(),
                             "business_name": _bName.text.trim(),
@@ -201,11 +201,11 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
                             "zip_code": _zipCode.text.trim(),
                             "business_address": _address.text.trim(),
                             "fileToUpload1": profileImage,
-                            "business_category": _businessType.text.trim(),
+                            "business_category": businessCategory.id,
                           });
                         }
 
-                        ApiService().updateCandidate(context, 1,data: data());
+                        ApiService().updateCandidate(context, 1, data: data());
                       }
                     }
                   }
@@ -303,11 +303,11 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.image_rounded,
                             color: AppColor.white,
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Gallery",
                             style: AppTextStyle.greySubTitle
@@ -329,11 +329,11 @@ class _UpdateCompanyScreenState extends State<UpdateCompanyScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.camera_alt_rounded,
                             color: AppColor.white,
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Camera",
                             style: AppTextStyle.greySubTitle

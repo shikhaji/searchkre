@@ -1,20 +1,12 @@
 import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/utils/theme_utils.dart';
-import 'commonMethod/notification.dart';
-import 'commonMethod/storage_handler.dart';
 import 'helper/preferences.dart';
-//
-// Future<void> backgroundHandler(RemoteMessage message) async {
-//   debugPrint(message.data.toString());
-//   debugPrint(message.notification!.title);
-// }
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

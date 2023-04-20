@@ -9,6 +9,8 @@ import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/views/commonPopUp/delete_post_popup.dart';
 import 'package:search_kare/widget/app_button.dart';
 
+import '../services/shared_preferences.dart';
+
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({Key? key}) : super(key: key);
 
@@ -60,7 +62,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     _DrawerMenuListTile.asset(
                       title: 'Contact Us',
                       onTap: () {
-                          Navigator.pushNamed(context, Routs.contactUs);
+                        Navigator.pushNamed(context, Routs.contactUs);
                       },
                       child: const Icon(Icons.contact_phone_sharp),
                     ),
@@ -73,9 +75,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                   'Are you sure you want to logout?')
                               .then((value) async {
                             if (value == true) {
-                              // Preferences.clearAllPref();
-                              // Navigator.pushNamedAndRemoveUntil(
-                              //     context, Routs.loginType, (route) => false);
+                              Preferences.clearAllPref();
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, Routs.login, (route) => false);
                             }
                           });
                         },

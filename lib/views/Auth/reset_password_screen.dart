@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';

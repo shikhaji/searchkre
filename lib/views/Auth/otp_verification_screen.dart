@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -175,10 +174,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   Future<void> sendCode() async {
     Loader.showLoader();
-    // await auth.setSettings(
-    //   appVerificationDisabledForTesting: false,
-    //   forceRecaptchaFlow: false,
-    // );
     auth.verifyPhoneNumber(
       phoneNumber: "${"+91"}${widget.arguments?.mobileNumber}",
       verificationCompleted: (PhoneAuthCredential credential) {},

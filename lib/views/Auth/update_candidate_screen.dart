@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:search_kare/helper/preferences.dart';
 import 'package:search_kare/models/city_model.dart';
 import 'package:search_kare/models/state_model.dart';
 import 'package:search_kare/routs/arguments.dart';
@@ -44,7 +43,6 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
   final TextEditingController _fName = TextEditingController();
   final TextEditingController _mName = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _mNumber = TextEditingController();
   final ValueNotifier<DateTime?> selectDate = ValueNotifier(null);
   final TextEditingController _dob = TextEditingController();
   final TextEditingController _state = TextEditingController();
@@ -150,13 +148,6 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                 ),
               ],
             ),
-            AppTextField(
-              title: "Mobile Number",
-              controller: TextEditingController(
-                  text: "+91 ${widget.arguments?.mobileNumber}"),
-              hintText: "Enter mobile number",
-              keyboardInputType: TextInputType.phone,
-            ),
             SizedBoxH14(),
             appText("Location", style: AppTextStyle.appText),
             SizedBoxH14(),
@@ -230,7 +221,7 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                     allowMultiple: false);
                 if (result == null) return;
                 final path = result.files.single.path;
-                print('file path.... :- ${path}');
+
                 setState(() => _file = File(path!));
               },
               child: uploadBox(
@@ -254,7 +245,7 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                         var cv = await MultipartFile.fromFile(_file!.path);
                         FormData data() {
                           return FormData.fromMap({
-                            "loginid": preferences.loginId,
+                            "loginid": widget.arguments?.kycLoginId,
                             "profile_type": 2,
                             'name': _name.text.trim(),
                             "father_name": _fName.text.trim(),
@@ -371,11 +362,11 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.image_rounded,
                             color: AppColor.white,
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Gallery",
                             style: AppTextStyle.greySubTitle
@@ -397,11 +388,11 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.camera_alt_rounded,
                             color: AppColor.white,
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Camera",
                             style: AppTextStyle.greySubTitle
@@ -423,6 +414,7 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
 
   Widget uploadBox(String title, String image) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Theme.of(context).cardColor,
@@ -432,14 +424,18 @@ class _UpdateCandidateScreenState extends State<UpdateCandidateScreen>
         ),
       ),
       width: ScreenUtil().screenWidth,
-      height: Sizes.s180.h,
       child: Center(
         child: image != ''
-            ? Text(_file!.path)
-            // ? ClipRRect(
-            //     borderRadius: BorderRadius.circular(16),
-            //     child: Image.file(File(image),
-            //         width: double.infinity, fit: BoxFit.cover))
+            ? ListTile(
+                title: Text(
+                  image != "" ? image.split("/").last : "",
+                  style: AppTextStyle.appText.copyWith(fontSize: Sizes.s12),
+                ),
+                leading: const Icon(
+                  Icons.picture_as_pdf,
+                  color: Colors.red,
+                ),
+              )
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

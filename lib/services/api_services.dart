@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:search_kare/api/url.dart';
 import 'package:search_kare/helper/preferences.dart';
 import 'package:search_kare/models/business_category_list.dart';
+import 'package:search_kare/models/get_candidate_profile.dart';
 import 'package:search_kare/models/get_city_list_model.dart';
+import 'package:search_kare/models/get_company_profile.dart';
+import 'package:search_kare/models/get_slider_list.dart';
 import 'package:search_kare/models/get_state_list_model.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
@@ -38,6 +41,34 @@ class ApiService {
       return;
     } finally {
       Loader.hideLoader();
+    }
+  }
+
+  Future<SliderModel> slider(BuildContext context) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.slider,
+        options: Options(headers: {
+          "Client-Service": "frontend-client",
+          "Auth-Key": 'simplerestapi',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        SliderModel responseData = SliderModel.fromJson(response.data);
+        Loader.hideLoader();
+        debugPrint('responseData ----- > ${response.data}');
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+      throw e.error;
     }
   }
 
@@ -78,15 +109,19 @@ class ApiService {
           }),
           data: data);
 
-      if (response.data['message'] == 'updated') {
-        if (updateType == 0) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routs.mainCandidateHome, (route) => false,
-              arguments: SendArguments(bottomIndex: 0));
+      if (response.statusCode == 200) {
+        if (updateType == 2) {
+          showToast('Profile Update!');
         } else {
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routs.mainCompanyHome, (route) => false,
-              arguments: SendArguments(bottomIndex: 0));
+          if (updateType == 0) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routs.mainCandidateHome, (route) => false,
+                arguments: SendArguments(bottomIndex: 0));
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routs.mainCompanyHome, (route) => false,
+                arguments: SendArguments(bottomIndex: 0));
+          }
         }
 
         return response;
@@ -157,6 +192,7 @@ class ApiService {
     try {
       Loader.showLoader();
       Response response;
+
       response = await dio.post(
         EndPoints.businessCategory,
         options: Options(headers: {"Content-Type": 'application/json'}),
@@ -164,6 +200,60 @@ class ApiService {
       if (response.statusCode == 200) {
         BusinessCategoryList responseData =
             BusinessCategoryList.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<GetCandidateProfile?> getCandidateProfile() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      FormData formData = FormData.fromMap({"loginid": preferences.loginId});
+      response = await dio.post(EndPoints.getProfileData,
+          options: Options(headers: {"Content-Type": 'application/json'}),
+          data: formData);
+
+      if (response.statusCode == 200) {
+        GetCandidateProfile responseData =
+            GetCandidateProfile.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<GetCompanyProfile?> getCompanyProfile() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      FormData formData = FormData.fromMap({"loginid": preferences.loginId});
+      response = await dio.post(EndPoints.getProfileData,
+          options: Options(headers: {"Content-Type": 'application/json'}),
+          data: formData);
+
+      if (response.statusCode == 200) {
+        GetCompanyProfile responseData =
+            GetCompanyProfile.fromJson(response.data);
         Loader.hideLoader();
         return responseData;
       } else {
@@ -196,19 +286,23 @@ class ApiService {
 
       if (response.data['message'] == 'ok') {
         showToast("Login successfully");
-        preferences.loginId = response.data['id'];
-        preferences.loginType = response.data['COMPANY_HRM_TYPE'];
-        preferences.profileUpdate = response.data['BRANCH_KYC_STATUS'];
 
         if (response.data['BRANCH_KYC_STATUS'] == "0") {
           if (response.data['COMPANY_HRM_TYPE'] == "2") {
             Navigator.pushNamed(context, Routs.updateCandidate,
-                arguments: SendArguments(mobileNumber: response.data['PHONE']));
+                arguments: SendArguments(
+                    mobileNumber: response.data['PHONE'],
+                    kycLoginId: response.data['id']));
           } else {
             Navigator.pushNamed(context, Routs.updateCompany,
-                arguments: SendArguments(mobileNumber: response.data['PHONE']));
+                arguments: SendArguments(
+                    mobileNumber: response.data['PHONE'],
+                    kycLoginId: response.data['id']));
           }
         } else {
+          preferences.loginId = response.data['id'];
+          preferences.loginType = response.data['COMPANY_HRM_TYPE'];
+          preferences.profileUpdate = response.data['BRANCH_KYC_STATUS'];
           if (response.data['COMPANY_HRM_TYPE'] == "2") {
             Navigator.pushNamedAndRemoveUntil(
                 context, Routs.mainCandidateHome, (route) => false,

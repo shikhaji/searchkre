@@ -36,6 +36,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, Routs.continueAs);
+                    preferences.isIntroCompleted = true;
                   },
                   child: Text(
                     "Skip",

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/widget/candidate_bottom_navigation_bar.dart';
-
+import 'apply_job_list_screen.dart';
+import 'candidate_home_screen.dart';
 import 'candidate_my_profile_screen.dart';
 
 class MainCandidateScreen extends StatefulWidget {
@@ -47,9 +48,9 @@ class _MainCandidateScreenState extends State<MainCandidateScreen> {
   Widget _buildBody(int index) {
     switch (index) {
       case 0:
-        return const SizedBox();
+        return const CandidateHomeScreen();
       case 1:
-        return const SizedBox();
+        return const ApplyJobListScreen();
       case 2:
         return const CandidateMyProfileScreen();
       default:

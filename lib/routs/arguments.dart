@@ -3,6 +3,12 @@ class SendArguments {
   String? mobileNumber;
   int? otpStatus;
   int? bottomIndex;
+  String? kycLoginId;
 
-  SendArguments({this.continueAs, this.mobileNumber, this.otpStatus,this.bottomIndex});
+  SendArguments(
+      {this.continueAs,
+      this.mobileNumber,
+      this.otpStatus,
+      this.bottomIndex,
+      this.kycLoginId});
 }

@@ -1,28 +1,44 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:search_kare/routs/app_routs.dart';
-import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/api/url.dart';
+import 'package:search_kare/models/get_slider_list.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text_style.dart';
 import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/views/commonPopUp/delete_post_popup.dart';
+import 'package:search_kare/widget/app_button.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class CompanyHomeScreen extends StatefulWidget {
-  const CompanyHomeScreen({Key? key}) : super(key: key);
+class CandidateHomeScreen extends StatefulWidget {
+  const CandidateHomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<CompanyHomeScreen> createState() => _CompanyHomeScreenState();
+  State<CandidateHomeScreen> createState() => _CandidateHomeScreenState();
 }
 
-class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
+class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  CarouselController buttonCarouselController = CarouselController();
+  List<SliderData> sliderData = [];
+  int _selectedSliderIndex = 0;
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
+  }
+
+  @override
+  void initState() {
+    ApiService().slider(context).then((value) {
+      if (value != null) {
+        setState(() {
+          sliderData = value.message;
+        });
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -58,6 +74,55 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBoxH20(),
+            SizedBox(
+              width: double.infinity,
+              child: CarouselSlider.builder(
+                  carouselController: buttonCarouselController,
+                  itemCount: sliderData.length ?? 0,
+                  itemBuilder: (BuildContext context, int itemIndex,
+                          int pageViewIndex) =>
+                      Padding(
+                          padding: const EdgeInsets.only(right: 3, left: 3),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                      '${EndPoints.imageUrl}${sliderData[itemIndex].sliderImage}',
+                                    ),
+                                    fit: BoxFit.cover)),
+                          )),
+                  options: CarouselOptions(
+                    onPageChanged: (index, _) {
+                      setState(() {
+                        _selectedSliderIndex = index;
+                      });
+                    },
+                    aspectRatio: 15 / 8,
+                    viewportFraction: 1,
+                    initialPage: 0,
+                    autoPlay: true,
+                    enableInfiniteScroll: false,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    scrollDirection: Axis.horizontal,
+                  )),
+            ),
+            SizedBoxH18(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ...List.generate(
+                  sliderData.length,
+                  (index) => Indicator(
+                      isActive: _selectedSliderIndex == index ? true : false),
+                )
+              ],
+            ),
+            SizedBoxH18(),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -98,6 +163,7 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
             ListView.builder(
                 shrinkWrap: true,
                 itemCount: 8,
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
                     padding: const EdgeInsets.only(top: 10, bottom: 12),
@@ -110,24 +176,10 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Flutter Developer",
-                                  style: AppTextStyle.appText
-                                      .copyWith(fontSize: Sizes.s16),
-                                ),
-                              ),
-                              IconButton(
-                                  onPressed: () async {
-                                    showDialogForMoreIcon();
-                                  },
-                                  icon: const Icon(
-                                    Icons.more_vert_sharp,
-                                    size: 24,
-                                  ))
-                            ],
+                          child: Text(
+                            "Flutter Developer",
+                            style: AppTextStyle.appText
+                                .copyWith(fontSize: Sizes.s16),
                           ),
                         ),
                         SizedBoxH8(),
@@ -148,20 +200,15 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                         const Divider(),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "View Candidate",
-                                  style: AppTextStyle.s20W7PrimaryColor
-                                      .copyWith(
-                                          fontSize: Sizes.s20,
-                                          decoration: TextDecoration.underline),
-                                ),
-                              )
-                            ],
+                          child: AppButton(
+                            title: "Apply",
+                            onPressed: () {
+                              DeletePostPopUp.show(context, 'Apply job',
+                                      'Are you sure you want to apply job?')
+                                  .then((value) async {
+                                if (value == true) {}
+                              });
+                            },
                           ),
                         )
                       ],
@@ -171,77 +218,26 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
           ],
         ));
   }
+}
 
-  showDialogForMoreIcon() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (a) => ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        child: Material(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: AppColor.primaryColor,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.all(20),
-                    color: AppColor.primaryColor,
-                    child: Column(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  Routs.mainCompanyHome, (route) => false,
-                                  arguments: SendArguments(bottomIndex: 1));
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.edit,
-                                  color: AppColor.white,
-                                ),
-                                SizedBoxW8(),
-                                Text("Edit Post",
-                                    style: AppTextStyle.heading
-                                        .copyWith(fontSize: Sizes.s20)),
-                              ],
-                            )),
-                        SizedBoxH14(),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              DeletePostPopUp.show(context, 'Delete your post?',
-                                      'Are you sure you want to delete the post.  You will not be able to recover it')
-                                  .then((value) async {});
-                            },
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.delete,
-                                  color: AppColor.white,
-                                ),
-                                SizedBoxW8(),
-                                Text("Delete Post",
-                                    style: AppTextStyle.heading
-                                        .copyWith(fontSize: Sizes.s20)),
-                              ],
-                            )),
-                      ],
-                    )),
-                const SizedBox(height: 10),
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
-        ),
-      ),
+class Indicator extends StatelessWidget {
+  final bool isActive;
+  const Indicator({
+    Key? key,
+    required this.isActive,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      height: 10.0,
+      margin: const EdgeInsets.symmetric(horizontal: 3.0),
+      width: isActive ? 10.0 : 10.0,
+      decoration: BoxDecoration(
+          color: isActive ? Colors.black : Colors.black,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: Colors.black, width: 2.0)),
     );
   }
 }
