@@ -66,6 +66,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       },
                       child: const Icon(Icons.contact_phone_sharp),
                     ),
+                    _DrawerMenuListTile.asset(
+                      title: 'FAQ',
+                      onTap: () {
+                        Navigator.pushNamed(context, Routs.faq);
+                      },
+                      child: const Icon(Icons.contact_phone_sharp),
+                    ),
                     ScreenUtil().setVerticalSpacing(30),
                     SizedBox(
                       width: ScreenUtil().screenWidth - 200,

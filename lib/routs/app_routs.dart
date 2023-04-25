@@ -9,11 +9,13 @@ import 'package:search_kare/views/Auth/reset_password_screen.dart';
 import 'package:search_kare/views/Auth/update_candidate_screen.dart';
 import 'package:search_kare/views/Auth/update_company_screen.dart';
 import 'package:search_kare/views/candidateDashboard/main_candidate_screen.dart';
+import 'package:search_kare/views/companyDashboard/edit_post_screen.dart';
 import 'package:search_kare/views/companyDashboard/main_company_screen.dart';
 import 'package:search_kare/views/companyDashboard/post_job_screen.dart';
 import 'package:search_kare/views/onBoarding/on_boarding_screen.dart';
 import 'package:search_kare/views/sideMenu/about_us.dart';
 import 'package:search_kare/views/sideMenu/contact_us.dart';
+import 'package:search_kare/views/sideMenu/faq_screen.dart';
 import 'package:search_kare/views/sideMenu/privacy_policy.dart';
 import 'package:search_kare/views/sideMenu/terms_and_condition_screen.dart';
 import 'package:search_kare/views/splash/splash_screen.dart';
@@ -33,11 +35,12 @@ class Routs {
   static const String updateCandidate = "/update_candidate_screen";
   static const String mainCandidateHome = "/main_candidate_screen";
   static const String mainCompanyHome = "/main_company_screen";
-  static const String postJob = "/post_job_screen";
   static const String privacyPolicy = "/privacy_policy";
   static const String termsAndCondition = "/terms_and_condition_screen";
   static const String aboutUs = "/about_us";
   static const String contactUs = "/contact_us_screen";
+  static const String faq = "/faq_screen";
+  static const String editPost = "/edit_post_screen";
 }
 
 class RoutGenerator {
@@ -47,6 +50,8 @@ class RoutGenerator {
     switch (settings.name) {
       case Routs.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case Routs.faq:
+        return MaterialPageRoute(builder: (_) => const FaqScreen());
       case Routs.continueAs:
         return MaterialPageRoute(builder: (_) => const ContinueAsScreen());
       case Routs.onBoarding:
@@ -80,6 +85,11 @@ class RoutGenerator {
             builder: (_) => MainCandidateScreen(
                   arguments: arguments as SendArguments,
                 ));
+      case Routs.editPost:
+        return MaterialPageRoute(
+            builder: (_) => EditPostScreen(
+                  arguments: arguments as SendArguments,
+                ));
       case Routs.mainCompanyHome:
         return MaterialPageRoute(
             builder: (_) => MainCompanyScreen(
@@ -95,8 +105,7 @@ class RoutGenerator {
             builder: (_) => OtpVerificationScreen(
                   arguments: arguments as SendArguments,
                 ));
-      case Routs.postJob:
-        return MaterialPageRoute(builder: (_) => const PostJobScreen());
+
       case Routs.privacyPolicy:
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
 

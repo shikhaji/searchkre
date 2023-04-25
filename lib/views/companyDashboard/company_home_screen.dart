@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:search_kare/api/url.dart';
+import 'package:search_kare/models/all_company_post_job_model.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text_style.dart';
@@ -23,6 +26,23 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
 
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
+  }
+
+  CompanyPostData? companyPostData;
+  @override
+  void initState() {
+    _onGetPost();
+    super.initState();
+  }
+
+  void _onGetPost() {
+    ApiService().allCompanyPostJob().then((value) {
+      if (value != null) {
+        setState(() {
+          companyPostData = value.message;
+        });
+      }
+    });
   }
 
   @override
@@ -57,122 +77,130 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
         body: CustomScroll(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // SizedBoxH20(),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Row(
+            //     children: List.generate(10, (index) {
+            //       return GestureDetector(
+            //         onTap: () {},
+            //         child: Container(
+            //             margin: const EdgeInsets.all(Sizes.s8),
+            //             padding: const EdgeInsets.only(
+            //                 top: Sizes.s12,
+            //                 bottom: Sizes.s12,
+            //                 left: Sizes.s12,
+            //                 right: Sizes.s12),
+            //             decoration: BoxDecoration(
+            //                 boxShadow: [
+            //                   BoxShadow(
+            //                     color: Colors.grey
+            //                         .withOpacity(0.4), //color of shadow
+            //                     spreadRadius: 2, //spread radius
+            //                     blurRadius: 2, // blur radius
+            //                     offset: const Offset(0, 2),
+            //                   )
+            //                 ],
+            //                 color: AppColor.white,
+            //                 borderRadius: BorderRadius.circular(Sizes.s12)),
+            //             child: Text(
+            //               "Marketing and research",
+            //               style: AppTextStyle.appText.copyWith(
+            //                 fontSize: Sizes.s16,
+            //                 fontWeight: FontWeight.w600,
+            //               ),
+            //             )),
+            //       );
+            //     }),
+            //   ),
+            // ),
             SizedBoxH20(),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(10, (index) {
-                  return GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                        margin: const EdgeInsets.all(Sizes.s8),
-                        padding: const EdgeInsets.only(
-                            top: Sizes.s12,
-                            bottom: Sizes.s12,
-                            left: Sizes.s12,
-                            right: Sizes.s12),
+            companyPostData != null && companyPostData?.post != null
+                ? Column(
+                    children:
+                        List.generate(companyPostData!.post.length, (index) {
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10, bottom: 12),
+                        margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey
-                                    .withOpacity(0.4), //color of shadow
-                                spreadRadius: 2, //spread radius
-                                blurRadius: 2, // blur radius
-                                offset: const Offset(0, 2),
-                              )
-                            ],
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(Sizes.s12)),
-                        child: Text(
-                          "Marketing and research",
-                          style: AppTextStyle.appText.copyWith(
-                            fontSize: Sizes.s16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
-                  );
-                }),
-              ),
-            ),
-            SizedBoxH20(),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: 8,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: AppColor.textFieldColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Flutter Developer",
-                                  style: AppTextStyle.appText
-                                      .copyWith(fontSize: Sizes.s16),
-                                ),
+                          color: AppColor.textFieldColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${companyPostData?.post[index].vapTitle}",
+                                      style: AppTextStyle.appText
+                                          .copyWith(fontSize: Sizes.s16),
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () async {
+                                        showDialogForMoreIcon(
+                                            "${companyPostData?.post[index].vapId}");
+                                      },
+                                      icon: const Icon(
+                                        Icons.more_vert_sharp,
+                                        size: 24,
+                                      ))
+                                ],
                               ),
-                              IconButton(
-                                  onPressed: () async {
-                                    showDialogForMoreIcon();
-                                  },
-                                  icon: const Icon(
-                                    Icons.more_vert_sharp,
-                                    size: 24,
-                                  ))
-                            ],
-                          ),
+                            ),
+                            SizedBoxH8(),
+                            Image.network(
+                              "${EndPoints.imageUrl}${companyPostData?.post[index].vapImage}",
+                              width: double.infinity,
+                            ),
+                            SizedBoxH8(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                "${companyPostData?.post[index].vapDesc}",
+                                style: AppTextStyle.greySubTitle
+                                    .copyWith(color: AppColor.black),
+                              ),
+                            ),
+                            SizedBoxH8(),
+                            const Divider(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      "View Candidate",
+                                      style: AppTextStyle.s20W7PrimaryColor
+                                          .copyWith(
+                                              fontSize: Sizes.s20,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        SizedBoxH8(),
-                        Image.network(
-                          "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg",
-                          width: double.infinity,
-                        ),
-                        SizedBoxH8(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            "A task topic is intended for a procedure that describes how to accomplish a task. A task topic lists a series of steps that users follow to produce an intended outcome. So a short description for a task topic should explain to the reader the purpose of the",
-                            style: AppTextStyle.greySubTitle
-                                .copyWith(color: AppColor.black),
-                          ),
-                        ),
-                        SizedBoxH8(),
-                        const Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "View Candidate",
-                                  style: AppTextStyle.s20W7PrimaryColor
-                                      .copyWith(
-                                          fontSize: Sizes.s20,
-                                          decoration: TextDecoration.underline),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                })
+                      );
+                    }),
+                  )
+                : Text("No Data Found!")
           ],
         ));
   }
 
-  showDialogForMoreIcon() {
+  showDialogForMoreIcon(String postId) {
     showCupertinoModalPopup(
       context: context,
       builder: (a) => ClipRRect(
@@ -197,9 +225,12 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                       children: [
                         TextButton(
                             onPressed: () {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  Routs.mainCompanyHome, (route) => false,
-                                  arguments: SendArguments(bottomIndex: 1));
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, Routs.editPost,
+                                  arguments: SendArguments(
+                                      bottomIndex: 1,
+                                      editPost: true,
+                                      postId: postId));
                             },
                             child: Row(
                               children: [
@@ -219,7 +250,12 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                               Navigator.pop(context);
                               DeletePostPopUp.show(context, 'Delete your post?',
                                       'Are you sure you want to delete the post.  You will not be able to recover it')
-                                  .then((value) async {});
+                                  .then((value) async {
+                                if (value == true) {
+                                  ApiService().deletePost(context, postId);
+                                  _onGetPost();
+                                }
+                              });
                             },
                             child: Row(
                               children: [

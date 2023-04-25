@@ -59,4 +59,11 @@ class FileUtils {
     var newDate = outputFormat.format(inputDate);
     return newDate;
   }
+
+  static getCurrentDate(String date) {
+    var inputDate = DateTime.parse(date);
+    var outputFormat = DateFormat('yyyy-MM-dd');
+    var newDate = outputFormat.format(inputDate);
+    return newDate;
+  }
 }

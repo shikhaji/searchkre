@@ -49,7 +49,11 @@ class _MainCompanyScreenState extends State<MainCompanyScreen> {
       case 0:
         return const CompanyHomeScreen();
       case 1:
-        return const PostJobScreen();
+        return PostJobScreen(
+          arguments: SendArguments(
+              editPost: widget.arguments?.editPost,
+              postId: widget.arguments?.postId),
+        );
       case 2:
         return const CompanyMyProfileScreen();
       default:

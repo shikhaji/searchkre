@@ -1,10 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/api/url.dart';
+import 'package:search_kare/helper/preferences.dart';
+import 'package:search_kare/models/all_post_model.dart';
+import 'package:search_kare/models/business_category_list.dart';
 import 'package:search_kare/models/get_slider_list.dart';
 import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text_style.dart';
+import 'package:search_kare/utils/file_utils.dart';
 import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/views/commonPopUp/delete_post_popup.dart';
 import 'package:search_kare/widget/app_button.dart';
@@ -24,6 +29,8 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CarouselController buttonCarouselController = CarouselController();
   List<SliderData> sliderData = [];
+  AllPostList? allPostList;
+  List<BusinessCategoryData> businessCategoryData = [];
   int _selectedSliderIndex = 0;
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
@@ -31,6 +38,13 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
 
   @override
   void initState() {
+    ApiService().businessCategoryList().then((value) {
+      if (value != null) {
+        setState(() {
+          businessCategoryData = value.message;
+        });
+      }
+    });
     ApiService().slider(context).then((value) {
       if (value != null) {
         setState(() {
@@ -38,7 +52,18 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
         });
       }
     });
+    getAllPost("0");
     super.initState();
+  }
+
+  void getAllPost(String catId) {
+    ApiService().allPost(catId).then((value) {
+      if (value != null) {
+        setState(() {
+          allPostList = value.message;
+        });
+      }
+    });
   }
 
   @override
@@ -78,7 +103,7 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
               width: double.infinity,
               child: CarouselSlider.builder(
                   carouselController: buttonCarouselController,
-                  itemCount: sliderData.length ?? 0,
+                  itemCount: sliderData.length,
                   itemBuilder: (BuildContext context, int itemIndex,
                           int pageViewIndex) =>
                       Padding(
@@ -126,9 +151,15 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(10, (index) {
+                children: List.generate(businessCategoryData.length, (index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        businessCategoryData[index].selected =
+                            businessCategoryData[index].selected;
+                      });
+                      getAllPost(businessCategoryData[index].id);
+                    },
                     child: Container(
                         margin: const EdgeInsets.all(Sizes.s8),
                         padding: const EdgeInsets.only(
@@ -146,10 +177,12 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
                                 offset: const Offset(0, 2),
                               )
                             ],
-                            color: AppColor.white,
+                            color: businessCategoryData[index].selected == true
+                                ? AppColor.black
+                                : AppColor.white,
                             borderRadius: BorderRadius.circular(Sizes.s12)),
                         child: Text(
-                          "Marketing and research",
+                          businessCategoryData[index].brandName,
                           style: AppTextStyle.appText.copyWith(
                             fontSize: Sizes.s16,
                             fontWeight: FontWeight.w600,
@@ -160,61 +193,94 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
               ),
             ),
             SizedBoxH20(),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: 8,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: AppColor.textFieldColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            "Flutter Developer",
-                            style: AppTextStyle.appText
-                                .copyWith(fontSize: Sizes.s16),
-                          ),
-                        ),
-                        SizedBoxH8(),
-                        Image.network(
-                          "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg",
-                          width: double.infinity,
-                        ),
-                        SizedBoxH8(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            "A task topic is intended for a procedure that describes how to accomplish a task. A task topic lists a series of steps that users follow to produce an intended outcome. So a short description for a task topic should explain to the reader the purpose of the",
-                            style: AppTextStyle.greySubTitle
-                                .copyWith(color: AppColor.black),
-                          ),
-                        ),
-                        SizedBoxH8(),
-                        const Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: AppButton(
-                            title: "Apply",
-                            onPressed: () {
-                              DeletePostPopUp.show(context, 'Apply job',
-                                      'Are you sure you want to apply job?')
-                                  .then((value) async {
-                                if (value == true) {}
-                              });
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                })
+            allPostList == null && allPostList?.allPost == null
+                ? const Center(
+                    child: Text("No Data found"),
+                  )
+                : Column(
+                    children: List.generate(
+                        allPostList!.allPost.length,
+                        (index) => Container(
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 12),
+                              margin: const EdgeInsets.only(bottom: Sizes.s26),
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey
+                                        .withOpacity(0.4), //color of shadow
+                                    spreadRadius: 2, //spread radius
+                                    blurRadius: 2, // blur radius
+                                    offset: const Offset(0, 2),
+                                  )
+                                ],
+                                color: AppColor.textFieldColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Text(
+                                      "${allPostList?.allPost[index].vapTitle}",
+                                      style: AppTextStyle.appText
+                                          .copyWith(fontSize: Sizes.s16),
+                                    ),
+                                  ),
+                                  SizedBoxH8(),
+                                  Image.network(
+                                    "${EndPoints.imageUrl}${allPostList?.allPost[index].vapImage}",
+                                    width: double.infinity,
+                                  ),
+                                  SizedBoxH8(),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Text(
+                                      "${allPostList?.allPost[index].vapDesc}",
+                                      style: AppTextStyle.greySubTitle
+                                          .copyWith(color: AppColor.black),
+                                    ),
+                                  ),
+                                  SizedBoxH8(),
+                                  const Divider(),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: AppButton(
+                                      title: "Apply",
+                                      onPressed: () {
+                                        DeletePostPopUp.show(
+                                                context,
+                                                'Apply job',
+                                                'Are you sure you want to apply job?')
+                                            .then((value) async {
+                                          if (value == true) {
+                                            var now = DateTime.now();
+                                            var currentDate =
+                                                FileUtils.getCurrentDate(
+                                                    now.toString());
+                                            FormData data() {
+                                              return FormData.fromMap({
+                                                "post_id": allPostList
+                                                    ?.allPost[index].vapId,
+                                                'loginid': preferences.loginId,
+                                                "date": currentDate,
+                                              });
+                                            }
+
+                                            ApiService().applyJob(context,
+                                                data: data());
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )),
+                  )
           ],
         ));
   }

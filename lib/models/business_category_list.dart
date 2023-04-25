@@ -31,17 +31,17 @@ class BusinessCategoryList {
 class BusinessCategoryData {
   BusinessCategoryData({
     required this.id,
-    required this.vendorId,
     required this.brandName,
     required this.status,
     required this.date,
     required this.brandImage,
     required this.catImage,
+    this.selected,
   });
 
   String id;
-  String vendorId;
   String brandName;
+  bool? selected = false;
   String status;
   String date;
   String brandImage;
@@ -50,7 +50,6 @@ class BusinessCategoryData {
   factory BusinessCategoryData.fromJson(Map<String, dynamic> json) =>
       BusinessCategoryData(
         id: json["id"],
-        vendorId: json["vendor_id"],
         brandName: json["brand_name"],
         status: json["status"],
         date: json["date"],
@@ -60,7 +59,6 @@ class BusinessCategoryData {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "vendor_id": vendorId,
         "brand_name": brandName,
         "status": status,
         "date": date,

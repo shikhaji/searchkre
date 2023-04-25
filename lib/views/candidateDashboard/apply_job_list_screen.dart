@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:search_kare/models/candidate_apply_list_model.dart';
+import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text_style.dart';
@@ -21,8 +23,17 @@ class _ApplyJobListScreenState extends State<ApplyJobListScreen> {
     _scaffoldKey.currentState?.openDrawer();
   }
 
+  CandidateApplyList? candidateApplyList;
+
   @override
   void initState() {
+    ApiService().candidateApplyList().then((value) {
+      if (value != null) {
+        setState(() {
+          candidateApplyList = value.message;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -55,58 +66,66 @@ class _ApplyJobListScreenState extends State<ApplyJobListScreen> {
           ),
           child: const DrawerWidget(),
         ),
-        body: CustomScroll(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBoxH20(),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: 8,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: AppColor.textFieldColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            "Flutter Developer",
-                            style: AppTextStyle.appText
-                                .copyWith(fontSize: Sizes.s16),
-                          ),
+        body: candidateApplyList != null && candidateApplyList?.job != null
+            ? CustomScroll(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBoxH20(),
+                  Column(
+                    children:
+                        List.generate(candidateApplyList!.job.length, (index) {
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10, bottom: 12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColor.textFieldColor,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        SizedBoxH8(),
-                        SizedBoxH8(),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "A task topic is intended for a procedure that describes how to accomplish a task. A task topic lists a series of steps that users follow to produce an intended outcome. So a short description for a task topic should explain to the reader the purpose of the",
-                                  style: AppTextStyle.greySubTitle
-                                      .copyWith(color: AppColor.black),
-                                ),
-                                SizedBoxH8(),
-                                Text(
-                                  "Your job is pending",
-                                  style: AppTextStyle.appText.copyWith(
-                                      fontSize: Sizes.s16, color: Colors.red),
-                                ),
-                              ],
-                            )),
-                        SizedBoxH8(),
-                      ],
-                    ),
-                  );
-                })
-          ],
-        ));
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(
+                                "${candidateApplyList?.job[index].vapTitle}",
+                                style: AppTextStyle.appText
+                                    .copyWith(fontSize: Sizes.s16),
+                              ),
+                            ),
+                            SizedBoxH8(),
+                            SizedBoxH8(),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${candidateApplyList?.job[index].vapDesc}",
+                                      style: AppTextStyle.greySubTitle
+                                          .copyWith(color: AppColor.black),
+                                    ),
+                                    SizedBoxH8(),
+                                    Text(
+                                      "${candidateApplyList?.job[index].branchStatus == "0" ? "Pending" : "Accept"}",
+                                      style: AppTextStyle.appText.copyWith(
+                                          fontSize: Sizes.s16,
+                                          color: Colors.red),
+                                    ),
+                                  ],
+                                )),
+                            SizedBoxH8(),
+                          ],
+                        ),
+                      );
+                    }),
+                  )
+                ],
+              )
+            : const Center(
+                child: Text("Data Not Found"),
+              ));
   }
 }

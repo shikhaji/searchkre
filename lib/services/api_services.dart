@@ -3,12 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:search_kare/api/url.dart';
 import 'package:search_kare/helper/preferences.dart';
+import 'package:search_kare/models/all_company_post_job_model.dart';
+import 'package:search_kare/models/all_post_model.dart';
 import 'package:search_kare/models/business_category_list.dart';
+import 'package:search_kare/models/candidate_apply_list_model.dart';
+import 'package:search_kare/models/faq_model.dart';
 import 'package:search_kare/models/get_candidate_profile.dart';
 import 'package:search_kare/models/get_city_list_model.dart';
 import 'package:search_kare/models/get_company_profile.dart';
 import 'package:search_kare/models/get_slider_list.dart';
 import 'package:search_kare/models/get_state_list_model.dart';
+import 'package:search_kare/models/post_details_model.dart';
 import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/utils/loader.dart';
@@ -46,7 +51,6 @@ class ApiService {
 
   Future<SliderModel> slider(BuildContext context) async {
     try {
-      Loader.showLoader();
       Response response;
       response = await dio.post(
         EndPoints.slider,
@@ -58,15 +62,11 @@ class ApiService {
 
       if (response.statusCode == 200) {
         SliderModel responseData = SliderModel.fromJson(response.data);
-        Loader.hideLoader();
-        debugPrint('responseData ----- > ${response.data}');
         return responseData;
       } else {
-        Loader.hideLoader();
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      Loader.hideLoader();
       debugPrint('Dio E  $e');
       throw e.error;
     }
@@ -349,5 +349,257 @@ class ApiService {
     } finally {
       Loader.hideLoader();
     }
+  }
+
+  Future addJob(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.addJob,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+      if (response.statusCode == 200) {
+        showToast('Your post add successfully!');
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future updatePost(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.updatePost,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+      if (response.statusCode == 200) {
+        showToast('Your post update successfully!');
+        Navigator.pushNamedAndRemoveUntil(
+            context, Routs.mainCompanyHome, (route) => false,
+            arguments: SendArguments(bottomIndex: 0));
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future<AllPostModel?> allPost(String categoryId) async {
+    try {
+      Loader.showLoader();
+      FormData data = FormData.fromMap({
+        "category_id": categoryId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.allPost,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.statusCode == 200) {
+        AllPostModel responseData = AllPostModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<CandidateApplyListModel?> candidateApplyList() async {
+    try {
+      Loader.showLoader();
+      FormData data = FormData.fromMap({
+        "loginid": preferences.loginId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.candidateApplyList,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.statusCode == 200) {
+        CandidateApplyListModel responseData =
+            CandidateApplyListModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<FaqModel?> getFaq() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.faq,
+        options: Options(headers: {"Content-Type": 'application/json'}),
+      );
+      if (response.statusCode == 200) {
+        FaqModel responseData = FaqModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future applyJob(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.applyJob,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+      if (response.statusCode == 200) {
+        showToast('Your job apply successfully!');
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future deletePost(BuildContext context, String postId) async {
+    try {
+      FormData data = FormData.fromMap({
+        "postid": postId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.deletePost,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+      if (response.statusCode == 200) {
+        showToast('Your post delete successfully!');
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future<AllCompanyPostJobModel?> allCompanyPostJob() async {
+    try {
+      FormData data = FormData.fromMap({
+        "login_id": preferences.loginId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.allPostJobByCompany,
+        options: Options(headers: {"Content-Type": 'application/json'}),
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        AllCompanyPostJobModel responseData =
+            AllCompanyPostJobModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future<PostDetailsModel?> postDetails(String postId) async {
+    try {
+      FormData data = FormData.fromMap({
+        "post_id": postId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.postDetails,
+        options: Options(headers: {"Content-Type": 'application/json'}),
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        PostDetailsModel responseData =
+            PostDetailsModel.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
   }
 }

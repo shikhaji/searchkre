@@ -15,26 +15,48 @@ import 'package:search_kare/utils/app_text_style.dart';
 import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/utils/show_toast.dart';
 import 'package:search_kare/utils/validation_mixin.dart';
+import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/widget/app_button.dart';
 import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
-class PostJobScreen extends StatefulWidget {
+class EditPostScreen extends StatefulWidget {
   final SendArguments? arguments;
-  const PostJobScreen({Key? key, this.arguments}) : super(key: key);
+  const EditPostScreen({Key? key, this.arguments}) : super(key: key);
 
   @override
-  State<PostJobScreen> createState() => _PostJobScreenState();
+  State<EditPostScreen> createState() => _EditPostScreenState();
 }
 
-class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
+class _EditPostScreenState extends State<EditPostScreen> with ValidationMixin {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _des = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   XFile? selectedDocument;
+  PostDetailsData? postDetailsData;
+  var imageUrl;
+
+  @override
+  void initState() {
+    print("hello post :=${widget.arguments?.editPost}");
+    if (widget.arguments?.editPost == true) {
+      ApiService().postDetails('${widget.arguments?.postId}').then((value) {
+        if (value != null) {
+          setState(() {
+            postDetailsData = value.message;
+            _title.text = postDetailsData!.post[0].vapTitle;
+            _des.text = postDetailsData!.post[0].vapDesc;
+            imageUrl = postDetailsData!.post[0].vapImage;
+            print("{imageUrl:=${imageUrl}");
+          });
+        }
+      });
+    }
+    super.initState();
+  }
 
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
@@ -45,18 +67,9 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppColor.textFieldColor,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          title: const Text(
-            "Post Job",
-            style: AppTextStyle.appText,
-          ),
-          leading: IconButton(
-              onPressed: () {
-                openDrawer();
-              },
-              icon: const Icon(Icons.menu_open_sharp)),
+        appBar: BackAppBar(
+          context,
+          title: 'Edit Post Job',
         ),
         drawer: Drawer(
           backgroundColor: Colors.white,
@@ -95,32 +108,31 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
                   },
                   child: uploadBox(
                     'Upload Your Post',
-                    selectedDocument != null ? selectedDocument!.path : '',
                   ),
                 ),
                 SizedBoxH28(),
                 AppButton(
-                    title: 'Post',
+                    title: 'Edit Post',
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
-                        if (selectedDocument?.path == null) {
-                          showToast("Upload your post image");
-                        } else {
-                          var mediaFile = await MultipartFile.fromFile(
+                        var mediaFile;
+                        if (selectedDocument != null) {
+                          mediaFile = await MultipartFile.fromFile(
                               selectedDocument!.path);
-                          print("media File :=${selectedDocument!.path}");
-                          print("media File :=${mediaFile}");
-                          FormData data() {
-                            return FormData.fromMap({
-                              "loginid": preferences.loginId,
-                              'title': _title.text.trim(),
-                              "desc": _des.text.trim(),
-                              "media": mediaFile,
-                            });
-                          }
-
-                          ApiService().addJob(context, data: data());
+                        } else {
+                          mediaFile = postDetailsData?.post[0].vapImage;
                         }
+                        FormData data() {
+                          return FormData.fromMap({
+                            "loginid": preferences.loginId,
+                            'title': _title.text.trim(),
+                            "desc": _des.text.trim(),
+                            "media": mediaFile,
+                            'postid': widget.arguments?.postId,
+                          });
+                        }
+
+                        ApiService().updatePost(context, data: data());
                       }
                     })
               ],
@@ -221,7 +233,7 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
     );
   }
 
-  Widget uploadBox(String title, String image) {
+  Widget uploadBox(String title) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -234,20 +246,19 @@ class _PostJobScreenState extends State<PostJobScreen> with ValidationMixin {
       width: ScreenUtil().screenWidth,
       height: Sizes.s180.h,
       child: Center(
-        child: image != ''
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(File(image),
-                    width: double.infinity, fit: BoxFit.cover))
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.upload_file),
-                  Text("Upload Your Post")
-                ],
-              ),
-      ),
+          child: selectedDocument != null && selectedDocument!.path != ''
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(File(selectedDocument!.path),
+                      width: double.infinity, fit: BoxFit.cover))
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(
+                    "${EndPoints.imageUrl}${imageUrl}",
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                )),
     );
   }
 
