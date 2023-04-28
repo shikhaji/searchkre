@@ -12,6 +12,7 @@ import 'package:search_kare/views/candidateDashboard/main_candidate_screen.dart'
 import 'package:search_kare/views/companyDashboard/edit_post_screen.dart';
 import 'package:search_kare/views/companyDashboard/main_company_screen.dart';
 import 'package:search_kare/views/companyDashboard/post_job_screen.dart';
+import 'package:search_kare/views/companyDashboard/view_candidate_details.dart';
 import 'package:search_kare/views/onBoarding/on_boarding_screen.dart';
 import 'package:search_kare/views/sideMenu/about_us.dart';
 import 'package:search_kare/views/sideMenu/contact_us.dart';
@@ -19,6 +20,7 @@ import 'package:search_kare/views/sideMenu/faq_screen.dart';
 import 'package:search_kare/views/sideMenu/privacy_policy.dart';
 import 'package:search_kare/views/sideMenu/terms_and_condition_screen.dart';
 import 'package:search_kare/views/splash/splash_screen.dart';
+import '../views/companyDashboard/view_all_apply_Candidate.dart';
 import 'arguments.dart';
 
 class Routs {
@@ -41,6 +43,8 @@ class Routs {
   static const String contactUs = "/contact_us_screen";
   static const String faq = "/faq_screen";
   static const String editPost = "/edit_post_screen";
+  static const String viewAllApplyCandidate = "/view_all_apply_Candidate";
+  static const String viewCandidateDetails = "/view_candidate_details";
 }
 
 class RoutGenerator {
@@ -116,6 +120,16 @@ class RoutGenerator {
         return MaterialPageRoute(builder: (_) => const AboutUsScreen());
       case Routs.contactUs:
         return MaterialPageRoute(builder: (_) => const ContactUsScreen());
+      case Routs.viewAllApplyCandidate:
+        return MaterialPageRoute(
+            builder: (_) => ViewAllApplyCandidate(
+                  arguments: arguments as SendArguments,
+                ));
+      case Routs.viewCandidateDetails:
+        return MaterialPageRoute(
+            builder: (_) => ViewCandidateProfileScreen(
+                  arguments: arguments as SendArguments,
+                ));
       default:
         return null;
     }

@@ -177,7 +177,11 @@ class _CompanyHomeScreenState extends State<CompanyHomeScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, Routs.viewAllApplyCandidate,arguments: SendArguments(
+                                        postId: companyPostData?.post[index].vapId
+                                      ));
+                                    },
                                     child: Text(
                                       "View Candidate",
                                       style: AppTextStyle.s20W7PrimaryColor

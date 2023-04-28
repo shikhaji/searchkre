@@ -6,6 +6,7 @@ class SendArguments {
   String? kycLoginId;
   String? postId;
   bool? editPost;
+  String? candidateId;
 
   SendArguments(
       {this.continueAs,
@@ -14,5 +15,7 @@ class SendArguments {
       this.editPost = false,
       this.postId,
       this.bottomIndex,
-      this.kycLoginId});
+      this.kycLoginId,
+      this.candidateId
+      });
 }

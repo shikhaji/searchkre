@@ -24,4 +24,5 @@ class EndPoints {
   static const String updatePost = '$baseUrl/update_add_post';
   static const String candidateApplyList = '$baseUrl/get_my_job_apply_list';
   static const String updateJobStatus = '$baseUrl/update_job_status';
+  static const String viewAllApplyCandidate = '$baseUrl/get_my_job_post_list';
 }

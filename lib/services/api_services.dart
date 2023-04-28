@@ -19,6 +19,8 @@ import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/utils/loader.dart';
 import 'package:search_kare/utils/show_toast.dart';
 
+import '../models/get_apply_candidateList.dart';
+
 class ApiService {
   Dio dio = Dio();
 
@@ -602,4 +604,86 @@ class ApiService {
     }
     return null;
   }
+
+  Future<GetAllCandidateApplyList?> allApplyCandidateList(String postId) async {
+    try {
+      FormData data = FormData.fromMap({
+        "postid": postId,
+      });
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(
+        EndPoints.viewAllApplyCandidate,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        GetAllCandidateApplyList responseData =
+        GetAllCandidateApplyList.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future updateJobStatus(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.updateJobStatus,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future<GetCandidateProfile?> getViewSingleCandidateProfile(String id) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      FormData formData = FormData.fromMap({"loginid": id});
+      response = await dio.post(EndPoints.getProfileData,
+          options: Options(headers: {"Content-Type": 'application/json'}),
+          data: formData);
+
+      if (response.statusCode == 200) {
+        GetCandidateProfile responseData =
+        GetCandidateProfile.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+
 }

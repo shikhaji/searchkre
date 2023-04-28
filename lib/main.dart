@@ -7,7 +7,6 @@ import 'package:search_kare/utils/screen_utils.dart';
 import 'package:search_kare/utils/theme_utils.dart';
 import 'helper/preferences.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
