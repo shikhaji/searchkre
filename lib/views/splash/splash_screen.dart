@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> verify() async {
-    Future.delayed(const Duration(seconds: 5)).then(
+    Future.delayed(const Duration(seconds: 3)).then(
       (value) {
         if (preferences.isIntroCompleted == false) {
           Navigator.pushNamedAndRemoveUntil(

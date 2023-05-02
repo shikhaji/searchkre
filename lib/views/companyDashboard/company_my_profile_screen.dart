@@ -122,10 +122,8 @@ class _CompanyMyProfileScreenState extends State<CompanyMyProfileScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBoxH46(),
-            appText("Personal Details", style: AppTextStyle.appText),
-            SizedBoxH14(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 buildProfileImageWidget(
                   context,
@@ -133,6 +131,8 @@ class _CompanyMyProfileScreenState extends State<CompanyMyProfileScreen>
               ],
             ),
             SizedBoxH28(),
+            appText("Personal Details", style: AppTextStyle.appText),
+            SizedBoxH14(),
             AppTextField(
               title: "Business Name",
               controller: _bName,

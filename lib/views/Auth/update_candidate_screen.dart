@@ -27,6 +27,7 @@ import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/scrollview.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 
+
 class UpdateCandidateScreen extends StatefulWidget {
   final SendArguments? arguments;
   const UpdateCandidateScreen({Key? key, this.arguments}) : super(key: key);

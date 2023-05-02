@@ -19,6 +19,7 @@ import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/utils/loader.dart';
 import 'package:search_kare/utils/show_toast.dart';
 
+import '../models/get_app_details.dart';
 import '../models/get_apply_candidateList.dart';
 
 class ApiService {
@@ -473,7 +474,7 @@ class ApiService {
     try {
       Loader.showLoader();
       Response response;
-      response = await dio.post(
+      response = await dio.get(
         EndPoints.faq,
         options: Options(headers: {"Content-Type": 'application/json'}),
       );
@@ -670,6 +671,55 @@ class ApiService {
       if (response.statusCode == 200) {
         GetCandidateProfile responseData =
         GetCandidateProfile.fromJson(response.data);
+        Loader.hideLoader();
+        return responseData;
+      } else {
+        Loader.hideLoader();
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      Loader.hideLoader();
+      debugPrint('Dio E  $e');
+    } finally {
+      Loader.hideLoader();
+    }
+    return null;
+  }
+
+  Future contactUs(BuildContext context, {FormData? data}) async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.contactUs,
+          options: Options(headers: {
+            "Client-Service": "frontend-client",
+            "Auth-Key": 'simplerestapi',
+          }),
+          data: data);
+      if (response.statusCode == 200) {
+        showToast('Your Enquire add successfully!');
+        return response;
+      } else {
+        showToast('Something went wrong');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return;
+    } finally {
+      Loader.hideLoader();
+    }
+  }
+
+  Future<GetAppDetails?> getAppDetails() async {
+    try {
+      Loader.showLoader();
+      Response response;
+      response = await dio.post(EndPoints.appDetails,
+          options: Options(headers: {"Content-Type": 'application/json'}));
+
+      if (response.statusCode == 200) {
+        GetAppDetails responseData =
+        GetAppDetails.fromJson(response.data);
         Loader.hideLoader();
         return responseData;
       } else {

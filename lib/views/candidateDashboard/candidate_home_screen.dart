@@ -93,7 +93,7 @@ class _CandidateHomeScreenState extends State<CandidateHomeScreen> {
               bottomRight: Radius.circular(Sizes.s20.r),
             ),
           ),
-          child: const DrawerWidget(),
+          child: DrawerWidget(),
         ),
         body: CustomScroll(
           crossAxisAlignment: CrossAxisAlignment.start,

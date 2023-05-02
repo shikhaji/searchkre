@@ -49,50 +49,50 @@ class GetProfileData {
 
 class Profile {
   Profile({
-    required this.branchId,
-    required this.branchName,
-    required this.branchAddress,
-    required this.branchState,
-    required this.branchCity,
-    required this.branchContact,
-    required this.branchEmail,
+    this.branchId,
+    this.branchName,
+    this.branchAddress,
+    this.branchState,
+    this.branchCity,
+    this.branchContact,
+    this.branchEmail,
     required this.branchTt,
-    required this.branchPassword,
-    required this.branchStatus,
-    required this.companyHrmType,
-    required this.branchFatherName,
-    required this.branchMotherName,
-    required this.branchZipCode,
-    required this.branchViewPassword,
-    required this.branchKycStatus,
-    required this.branchPhoto,
-    required this.branchCv,
-    required this.branchQualification,
-    required this.branchDob,
-    required this.branchExperience,
+    this.branchPassword,
+    this.branchStatus,
+    this.companyHrmType,
+    this.branchFatherName,
+    this.branchMotherName,
+    this.branchZipCode,
+    this.branchViewPassword,
+    this.branchKycStatus,
+    this.branchPhoto,
+    this.branchCv,
+    this.branchQualification,
+    this.branchDob,
+    this.branchExperience,
   });
 
-  String branchId;
-  String branchName;
-  String branchAddress;
-  String branchState;
-  String branchCity;
-  String branchContact;
-  String branchEmail;
+  String? branchId;
+  String? branchName;
+  String? branchAddress;
+  String? branchState;
+  String? branchCity;
+  String? branchContact;
+  String? branchEmail;
   DateTime branchTt;
-  String branchPassword;
-  String branchStatus;
-  String companyHrmType;
-  String branchFatherName;
-  String branchMotherName;
-  String branchZipCode;
-  String branchViewPassword;
-  String branchKycStatus;
-  String branchPhoto;
-  String branchCv;
-  String branchQualification;
-  String branchDob;
-  String branchExperience;
+  String? branchPassword;
+  String? branchStatus;
+  String? companyHrmType;
+  String? branchFatherName;
+  String? branchMotherName;
+  String? branchZipCode;
+  String? branchViewPassword;
+  String? branchKycStatus;
+  String? branchPhoto;
+  String? branchCv;
+  String? branchQualification;
+  String? branchDob;
+  String? branchExperience;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
         branchId: json["BRANCH_ID"],

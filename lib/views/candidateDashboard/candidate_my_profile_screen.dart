@@ -79,18 +79,18 @@ class _CandidateMyProfileScreenState extends State<CandidateMyProfileScreen>
       if (value != null) {
         setState(() {
           getProfileData = value.message;
-          _name.text = getProfileData!.profile.branchName;
-          _fName.text = getProfileData!.profile.branchFatherName;
-          _mName.text = getProfileData!.profile.branchMotherName;
-          _email.text = getProfileData!.profile.branchEmail;
-          _dob.text = getProfileData!.profile.branchDob;
-          _mNumber.text = getProfileData!.profile.branchContact;
-          _state.text = getProfileData!.profile.branchState;
-          _city.text = getProfileData!.profile.branchCity;
-          _zipCode.text = getProfileData!.profile.branchZipCode;
-          _address.text = getProfileData!.profile.branchAddress;
-          _qualification.text = getProfileData!.profile.branchQualification;
-          _experience.text = getProfileData!.profile.branchExperience;
+          _name.text = getProfileData!.profile.branchName!;
+          _fName.text = getProfileData!.profile.branchFatherName!;
+          _mName.text = getProfileData!.profile.branchMotherName!;
+          _email.text = getProfileData!.profile.branchEmail!;
+          _dob.text = getProfileData!.profile.branchDob!;
+          _mNumber.text = getProfileData!.profile.branchContact!;
+          _state.text = getProfileData!.profile.branchState!;
+          _city.text = getProfileData!.profile.branchCity!;
+          _zipCode.text = getProfileData!.profile.branchZipCode!;
+          _address.text = getProfileData!.profile.branchAddress!;
+          _qualification.text = getProfileData!.profile.branchQualification!;
+          _experience.text = getProfileData!.profile.branchExperience!;
           profileUrl = getProfileData!.profile.branchPhoto;
         });
       }
@@ -479,7 +479,7 @@ class _CandidateMyProfileScreenState extends State<CandidateMyProfileScreen>
                 image != ""
                     ? image.split("/").last
                     : getProfileData != null
-                        ? getProfileData!.profile.branchCv
+                        ? getProfileData!.profile.branchCv!
                         : "",
                 style: AppTextStyle.appText.copyWith(fontSize: Sizes.s12),
               ),

@@ -3,6 +3,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:search_kare/widget/app_bars.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
+import '../../models/get_app_details.dart';
+import '../../services/api_services.dart';
+
 class TermsAndConditionScreen extends StatefulWidget {
   const TermsAndConditionScreen({Key? key}) : super(key: key);
 
@@ -12,10 +15,19 @@ class TermsAndConditionScreen extends StatefulWidget {
 }
 
 class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
+
+  Logo? getAppData;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    ApiService().getAppDetails().then((value) {
+      if (value != null) {
+        setState(() {
+          getAppData = value.logo;
+        });
+      }
+    });
   }
 
   @override
@@ -27,12 +39,12 @@ class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
       ),
       body: CustomScroll(
         children: [
-          // Html(
-          //   data: _termsAndConditionModel != null &&
-          //           _termsAndConditionModel!.message != null
-          //       ? _termsAndConditionModel!.message.orgTermsConditions
-          //       : "",
-          // ),
+          Html(
+            data: getAppData != null &&
+                    getAppData!.orgTermsConditions2 != null
+                ?  getAppData!.orgTermsConditions2
+                : "",
+          ),
         ],
       ),
     );

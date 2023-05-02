@@ -32,6 +32,8 @@ import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 
+import '../../widget/app_bars.dart';
+
 class ViewCandidateProfileScreen extends StatefulWidget {
   final SendArguments? arguments;
   const ViewCandidateProfileScreen({Key? key, this.arguments}) : super(key: key);
@@ -75,18 +77,18 @@ class _ViewCandidateProfileScreenState extends State<ViewCandidateProfileScreen>
       if (value != null) {
         setState(() {
           getProfileData = value.message;
-          _name.text = getProfileData!.profile.branchName;
-          _fName.text = getProfileData!.profile.branchFatherName;
-          _mName.text = getProfileData!.profile.branchMotherName;
-          _email.text = getProfileData!.profile.branchEmail;
-          _dob.text = getProfileData!.profile.branchDob;
-          _mNumber.text = getProfileData!.profile.branchContact;
-          _state.text = getProfileData!.profile.branchState;
-          _city.text = getProfileData!.profile.branchCity;
-          _zipCode.text = getProfileData!.profile.branchZipCode;
-          _address.text = getProfileData!.profile.branchAddress;
-          _qualification.text = getProfileData!.profile.branchQualification;
-          _experience.text = getProfileData!.profile.branchExperience;
+          _name.text = getProfileData!.profile.branchName!;
+          _fName.text = getProfileData!.profile.branchFatherName!;
+          _mName.text = getProfileData!.profile.branchMotherName!;
+          _email.text = getProfileData!.profile.branchEmail!;
+          _dob.text = getProfileData!.profile.branchDob!;
+          _mNumber.text = getProfileData!.profile.branchContact!;
+          _state.text = getProfileData!.profile.branchState!;
+          _city.text = getProfileData!.profile.branchCity!;
+          _zipCode.text = getProfileData!.profile.branchZipCode!;
+          _address.text = getProfileData!.profile.branchAddress!;
+          _qualification.text = getProfileData!.profile.branchQualification!;
+          _experience.text = getProfileData!.profile.branchExperience!;
           profileUrl = getProfileData!.profile.branchPhoto;
         });
       }
@@ -98,18 +100,9 @@ class _ViewCandidateProfileScreenState extends State<ViewCandidateProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Candidate Profile",
-          style: AppTextStyle.appText,
-        ),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios_new)),
+      appBar: BackAppBar(
+        context,
+        title: 'Candidate Profile',
       ),
       body: SafeArea(
           child: Form(
@@ -388,7 +381,7 @@ class _ViewCandidateProfileScreenState extends State<ViewCandidateProfileScreen>
                 image != ""
                     ? image.split("/").last
                     : getProfileData != null
-                    ? getProfileData!.profile.branchCv
+                    ? getProfileData!.profile.branchCv!
                     : "",
                 style: AppTextStyle.appText.copyWith(fontSize: Sizes.s12),
               ),

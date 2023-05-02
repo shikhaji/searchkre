@@ -7,6 +7,8 @@ import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/scrollview.dart';
 
+import '../../services/api_services.dart';
+
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({Key? key}) : super(key: key);
 
@@ -18,6 +20,7 @@ class _ContactUsScreenState extends State<ContactUsScreen>
     with ValidationMixin {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  final TextEditingController _sub = TextEditingController();
   final TextEditingController _msg = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -46,6 +49,12 @@ class _ContactUsScreenState extends State<ContactUsScreen>
                 validator: emailValidator,
               ),
               AppTextField(
+                title: "Subject",
+                controller: _sub,
+                hintText: "Enter your Subject",
+                validator: msgValidator,
+              ),
+              AppTextField(
                 title: "Message",
                 controller: _msg,
                 hintText: "Enter your message",
@@ -60,11 +69,12 @@ class _ContactUsScreenState extends State<ContactUsScreen>
                         return FormData.fromMap({
                           "name": _name.text.trim(),
                           'email': _email.text.trim(),
+                          'subject': _sub.text.trim(),
                           "msg": _msg.text.trim(),
                         });
                       }
 
-                      //ApiService().register(context, data: data());
+                      ApiService().contactUs(context, data: data());
                     }
                   }),
             ],

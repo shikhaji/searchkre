@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +11,11 @@ import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
 import 'package:search_kare/utils/app_sizes.dart';
 import 'package:search_kare/utils/app_text_style.dart';
-import 'package:search_kare/views/commonPopUp/delete_post_popup.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/scrollview.dart';
-
 import '../../models/get_apply_candidateList.dart';
 import '../../utils/loader.dart';
+import '../../widget/app_bars.dart';
 
 
 class ViewAllApplyCandidate extends StatefulWidget {
@@ -52,18 +50,9 @@ class _ViewAllApplyCandidateState extends State<ViewAllApplyCandidate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          title: const Text(
-            "All Candidate List",
-            style: AppTextStyle.appText,
-          ),
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back_ios_new)),
+        appBar: BackAppBar(
+          context,
+          title: 'All Candidate List',
         ),
         body: Form(
           key: _formKey,

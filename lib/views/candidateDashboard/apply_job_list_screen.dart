@@ -108,11 +108,25 @@ class _ApplyJobListScreenState extends State<ApplyJobListScreen> {
                                           .copyWith(color: AppColor.black),
                                     ),
                                     SizedBoxH8(),
-                                    Text(
-                                      "${candidateApplyList?.job[index].branchStatus == "0" ? "Pending" : "Accept"}",
-                                      style: AppTextStyle.appText.copyWith(
-                                          fontSize: Sizes.s16,
-                                          color: Colors.red),
+                                    candidateApplyList?.job[index].cjalStatus == "0"? Text(
+                                      "Application Pending",
+                                      style: AppTextStyle.s20W7PrimaryColor
+                                          .copyWith(
+                                          fontSize: Sizes.s20,
+                                          color: AppColor.orange
+                                      ),
+                                    ) :  candidateApplyList?.job[index].cjalStatus == "1"? Text(
+                                      "Application Accepted",
+                                      style: AppTextStyle.s20W7PrimaryColor
+                                          .copyWith(
+                                          fontSize: Sizes.s20,
+                                          color: AppColor.green),
+                                    ) : Text(
+                                      "Application Reject",
+                                      style: AppTextStyle.s20W7PrimaryColor
+                                          .copyWith(
+                                          fontSize: Sizes.s20,
+                                          color: AppColor.red),
                                     ),
                                   ],
                                 )),
