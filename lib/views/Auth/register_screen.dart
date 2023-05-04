@@ -66,15 +66,17 @@ class _RegisterScreenState extends State<RegisterScreen> with ValidationMixin {
               controller: TextEditingController(
                   text: '+91 ${widget.arguments?.mobileNumber}'),
               hintText: "Enter mobile number",
+              validator: mobileNumberValidator,
               readOnly: true,
             ),
             AppTextField(
               controller: _password,
               hintText: "Enter Password",
               title: "Enter Password",
-              validator: (value) {
-                return confirmPasswordValidator(value!, _password.text.trim());
-              },
+              validator: passwordValidator,
+              // validator: (value) {
+              //   return confirmPasswordValidator(value!, _password.text.trim());
+              // },
               suffix: GestureDetector(
                   onTap: () {
                     setState(() {
@@ -86,24 +88,24 @@ class _RegisterScreenState extends State<RegisterScreen> with ValidationMixin {
                       : const Icon(Icons.visibility)),
               obscureText: obscurePassword,
             ),
-            AppTextField(
-              controller: _cPassword,
-              hintText: "Enter Confirm Password",
-              title: "Enter Confirm Password",
-              validator: (value) {
-                return confirmPasswordValidator(value!, _password.text.trim());
-              },
-              suffix: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      obscureCPassword = !obscureCPassword;
-                    });
-                  },
-                  child: obscureCPassword
-                      ? const Icon(Icons.visibility_off)
-                      : const Icon(Icons.visibility)),
-              obscureText: obscureCPassword,
-            ),
+            // AppTextField(
+            //   controller: _cPassword,
+            //   hintText: "Enter Confirm Password",
+            //   title: "Enter Confirm Password",
+            //   validator: (value) {
+            //     return confirmPasswordValidator(value!, _password.text.trim());
+            //   },
+            //   suffix: GestureDetector(
+            //       onTap: () {
+            //         setState(() {
+            //           obscureCPassword = !obscureCPassword;
+            //         });
+            //       },
+            //       child: obscureCPassword
+            //           ? const Icon(Icons.visibility_off)
+            //           : const Icon(Icons.visibility)),
+            //   obscureText: obscureCPassword,
+            // ),
             SizedBoxH8(),
             AppButton(
                 title: "Register",

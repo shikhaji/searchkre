@@ -75,6 +75,7 @@ class _ContactUsScreenState extends State<ContactUsScreen>
                       }
 
                       ApiService().contactUs(context, data: data());
+                      Navigator.pop(context);
                     }
                   }),
             ],

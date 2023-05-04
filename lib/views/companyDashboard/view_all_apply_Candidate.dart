@@ -300,6 +300,7 @@ class _ViewAllApplyCandidateState extends State<ViewAllApplyCandidate> {
                                       candidateId: candidateId));
                             },
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
                                   Icons.remove_red_eye,

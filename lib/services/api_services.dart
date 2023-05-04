@@ -340,8 +340,9 @@ class ApiService {
           }),
           data: data);
 
-      if (response.statusMessage == 200) {
+      if (response.statusCode == 200) {
         Navigator.pushNamed(context, Routs.login);
+        showToast('Password Updated');
         return response;
       } else {
         showToast('Something went wrong');

@@ -32,7 +32,7 @@ class FileUtils {
     final DateTime? selectedTime = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
+        firstDate: DateTime(1900, 1),
         lastDate: DateTime(2101),
         builder: (BuildContext context, Widget? child) {
           return Theme(

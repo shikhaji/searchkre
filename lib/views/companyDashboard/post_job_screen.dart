@@ -7,6 +7,7 @@ import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:search_kare/api/url.dart';
 import 'package:search_kare/helper/preferences.dart';
 import 'package:search_kare/models/post_details_model.dart';
+import 'package:search_kare/routs/app_routs.dart';
 import 'package:search_kare/routs/arguments.dart';
 import 'package:search_kare/services/api_services.dart';
 import 'package:search_kare/utils/app_color.dart';
@@ -20,6 +21,9 @@ import 'package:search_kare/widget/app_text_field.dart';
 import 'package:search_kare/widget/custom_sized_box.dart';
 import 'package:search_kare/widget/drawer_widget.dart';
 import 'package:search_kare/widget/scrollview.dart';
+
+import 'company_home_screen.dart';
+import 'main_company_screen.dart';
 
 class PostJobScreen extends StatefulWidget {
   final SendArguments? arguments;

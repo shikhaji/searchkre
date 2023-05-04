@@ -95,7 +95,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                     FormData data() {
                       return FormData.fromMap({
                         "phone": widget.arguments?.mobileNumber,
-                        "new_password": _password.text.trim(),
+                        "new_password": _cPassword.text.trim(),
                       });
                     }
 
